@@ -59,7 +59,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
         setIsLoggedIn(false);
       }
     };
-    
+
     checkAuth();
   }, []);
 
@@ -106,7 +106,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
         <nav className="p-4">
           <DropdownItem title="Phones" links={phoneLinks} onClose={onClose} />
           <DropdownItem title="Laptops" links={laptopLinks} onClose={onClose} />
-          
+
           <Link 
             href="/accessories" 
             className="block font-medium py-2 mb-4 hover:text-primary dark:hover:text-primary transition-colors"
@@ -128,7 +128,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
           >
             Refurbished
           </Link>
-          
+
           <div className="mt-6 pt-6 border-t dark:border-neutral-800">
             {isLoggedIn ? (
               <>

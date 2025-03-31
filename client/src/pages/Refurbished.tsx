@@ -9,12 +9,12 @@ import { Product } from '@shared/schema';
 const Refurbished: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedBrand, setSelectedBrand] = useState('all');
-  
+
   // Fetch products
   const { data: products = [], isLoading } = useQuery<Product[]>({
     queryKey: ['/api/products'],
   });
-  
+
   // In a real app, we'd filter by refurbished property, but here we'll simulate it
   // by considering certain products as refurbished (for demo purposes)
   const refurbishedProducts = products.filter(
@@ -23,74 +23,72 @@ const Refurbished: React.FC = () => {
     ...product,
     price: Number((product.price * 0.7).toFixed(2)) // Refurbished products are 30% cheaper
   }));
-  
+
   // Get unique categories
   const categories = Array.from(new Set(refurbishedProducts.map(product => product.category)));
-  
+
   // Get unique brands
   const brands = Array.from(new Set(refurbishedProducts.map(product => product.brand)));
-  
+
   // Category filter options
   const categoryFilterOptions = [
-    { value: 'all', label: 'Tất cả danh mục' },
+    { value: 'all', label: 'All Categories' },
     ...categories.map(category => ({ 
       value: category, 
       label: category === 'phones' 
-        ? 'Điện thoại' 
+        ? 'Phones' 
         : category === 'laptops' 
-        ? 'Laptop'
+        ? 'Laptops'
         : category === 'tablets'
-        ? 'Máy tính bảng'
+        ? 'Tablets'
         : category === 'accessories'
-        ? 'Phụ kiện'
+        ? 'Accessories'
         : category
     }))
   ];
-  
+
   // Brand filter options
   const brandFilterOptions = [
-    { value: 'all', label: 'Tất cả thương hiệu' },
+    { value: 'all', label: 'All Brands' },
     ...brands.map(brand => ({ value: brand, label: brand }))
   ];
-  
+
   // Apply filters
   const filteredProducts = refurbishedProducts.filter(product => {
     const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
     const matchesBrand = selectedBrand === 'all' || product.brand === selectedBrand;
-    
+
     return matchesCategory && matchesBrand;
   });
-  
+
   // Handle filter changes
   const handleCategoryFilterChange = (value: string) => {
     setSelectedCategory(value);
   };
-  
+
   const handleBrandFilterChange = (value: string) => {
     setSelectedBrand(value);
   };
-  
+
   return (
     <div className="bg-white dark:bg-neutral-900">
       <div className="container mx-auto px-4 py-8">
         {/* Header section */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <h1 className="text-3xl font-bold">Sản Phẩm Tân Trang</h1>
+            <h1 className="text-3xl font-bold">Refurbished Products</h1>
             <Badge variant="outline" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-300 dark:border-green-700">
-              Tiết kiệm đến 30%
+              Save up to 30%
             </Badge>
           </div>
           <p className="text-neutral-600 dark:text-neutral-300 mb-8 max-w-3xl">
-            Khám phá các sản phẩm đã qua sử dụng đã được kỹ thuật viên chuyên nghiệp của chúng tôi kiểm tra, 
-            sửa chữa và làm mới toàn diện. Mọi sản phẩm tân trang đều trải qua quy trình kiểm định 
-            nghiêm ngặt và được bảo hành như sản phẩm mới.
+            Discover professionally inspected, repaired, and refurbished pre-owned products.  All refurbished products undergo a rigorous quality assurance process and come with a warranty.
           </p>
         </div>
-        
+
         {/* Refurbished info banner */}
         <div className="bg-primary/10 border border-primary/20 rounded-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4 text-primary">Lợi Ích Của Sản Phẩm Tân Trang</h2>
+          <h2 className="text-xl font-semibold mb-4 text-primary">Benefits of Refurbished Products</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="flex items-start gap-3">
               <div className="bg-white dark:bg-neutral-800 h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0">
@@ -99,13 +97,13 @@ const Refurbished: React.FC = () => {
                 </svg>
               </div>
               <div>
-                <h3 className="font-medium mb-1">Tiết kiệm chi phí</h3>
+                <h3 className="font-medium mb-1">Cost Savings</h3>
                 <p className="text-sm text-neutral-600 dark:text-neutral-300">
-                  Giá thấp hơn 20-30% so với sản phẩm mới cùng model
+                  20-30% lower price compared to new models
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <div className="bg-white dark:bg-neutral-800 h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0">
                 <svg className="h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,13 +111,13 @@ const Refurbished: React.FC = () => {
                 </svg>
               </div>
               <div>
-                <h3 className="font-medium mb-1">Bảo hành 12 tháng</h3>
+                <h3 className="font-medium mb-1">12-Month Warranty</h3>
                 <p className="text-sm text-neutral-600 dark:text-neutral-300">
-                  Được bảo hành đầy đủ như sản phẩm mới
+                  Fully warranted like a new product
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <div className="bg-white dark:bg-neutral-800 h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0">
                 <svg className="h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,67 +125,67 @@ const Refurbished: React.FC = () => {
                 </svg>
               </div>
               <div>
-                <h3 className="font-medium mb-1">Thân thiện môi trường</h3>
+                <h3 className="font-medium mb-1">Environmentally Friendly</h3>
                 <p className="text-sm text-neutral-600 dark:text-neutral-300">
-                  Giảm rác thải điện tử, góp phần bảo vệ môi trường
+                  Reduces electronic waste and helps protect the environment
                 </p>
               </div>
             </div>
           </div>
         </div>
-        
+
         <Separator className="mb-8" />
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar with filters */}
           <div className="lg:col-span-1">
             <div className="bg-neutral-50 dark:bg-neutral-800 p-6 rounded-lg sticky top-24">
-              <h2 className="text-xl font-semibold mb-6">Bộ Lọc</h2>
-              
+              <h2 className="text-xl font-semibold mb-6">Filters</h2>
+
               <div className="space-y-8">
                 <div>
-                  <h3 className="font-medium mb-4">Danh Mục</h3>
+                  <h3 className="font-medium mb-4">Category</h3>
                   <ProductFilter 
                     options={categoryFilterOptions}
                     selectedOption={selectedCategory}
                     onChange={handleCategoryFilterChange}
                   />
                 </div>
-                
+
                 <Separator />
-                
+
                 <div>
-                  <h3 className="font-medium mb-4">Thương Hiệu</h3>
+                  <h3 className="font-medium mb-4">Brand</h3>
                   <ProductFilter 
                     options={brandFilterOptions}
                     selectedOption={selectedBrand}
                     onChange={handleBrandFilterChange}
                   />
                 </div>
-                
+
                 <Separator />
-                
+
                 <div>
-                  <h3 className="font-medium mb-4">Tình Trạng</h3>
+                  <h3 className="font-medium mb-4">Condition</h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center">
                       <span className="h-3 w-3 rounded-full bg-green-500 mr-2"></span>
-                      <span>Như mới (Đã sử dụng ít)</span>
+                      <span>Like New (Lightly Used)</span>
                     </div>
                     <div className="flex items-center">
                       <span className="h-3 w-3 rounded-full bg-yellow-500 mr-2"></span>
-                      <span>Tốt (Có vài vết xước nhỏ)</span>
+                      <span>Good (Minor Scratches)</span>
                     </div>
                     <div className="flex items-center">
                       <span className="h-3 w-3 rounded-full bg-orange-500 mr-2"></span>
-                      <span>Khá (Có dấu hiệu sử dụng)</span>
+                      <span>Fair (Shows Signs of Use)</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          
+
           {/* Main content */}
           <div className="lg:col-span-3">
             {/* Info message */}
@@ -197,29 +195,27 @@ const Refurbished: React.FC = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <p className="text-sm">
-                  Mỗi sản phẩm tân trang được đánh giá theo các tiêu chuẩn nghiêm ngặt về chất lượng, 
-                  bao gồm pin, màn hình, camera và các linh kiện khác. 
-                  Tình trạng sản phẩm được hiển thị chi tiết trên mỗi sản phẩm.
+                  Each refurbished product is assessed according to strict quality standards, including battery, screen, camera, and other components.  Product condition is shown in detail on each product page.
                 </p>
               </div>
             </div>
-            
+
             {/* Display number of results */}
             <div className="mb-6">
               <p className="text-neutral-600 dark:text-neutral-400">
-                Hiển thị {filteredProducts.length} sản phẩm
+                Showing {filteredProducts.length} products
               </p>
             </div>
-            
+
             {/* Products grid */}
             <ProductGrid products={filteredProducts} isLoading={isLoading} />
-            
+
             {/* No results message */}
             {!isLoading && filteredProducts.length === 0 && (
               <div className="py-12 text-center">
-                <h3 className="text-xl font-semibold mb-4">Không tìm thấy sản phẩm</h3>
+                <h3 className="text-xl font-semibold mb-4">No Products Found</h3>
                 <p className="text-neutral-600 dark:text-neutral-300 mb-6">
-                  Không tìm thấy sản phẩm phù hợp với bộ lọc đã chọn.
+                  No products match the selected filters.
                 </p>
                 <button 
                   onClick={() => {
@@ -228,85 +224,81 @@ const Refurbished: React.FC = () => {
                   }}
                   className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
                 >
-                  Xóa Bộ Lọc
+                  Clear Filters
                 </button>
               </div>
             )}
           </div>
         </div>
-        
+
         {/* Refurbished process */}
         <div className="mt-16">
-          <h2 className="text-2xl font-bold mb-8">Quy Trình Tân Trang</h2>
+          <h2 className="text-2xl font-bold mb-8">Refurbishment Process</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="bg-neutral-50 dark:bg-neutral-800 p-6 rounded-lg relative">
               <div className="absolute -top-3 -left-3 bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold">
                 1
               </div>
-              <h3 className="font-semibold mb-3 mt-2">Thu Mua & Kiểm Tra</h3>
+              <h3 className="font-semibold mb-3 mt-2">Acquisition & Inspection</h3>
               <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-                Chúng tôi thu mua thiết bị đã qua sử dụng và tiến hành kiểm tra toàn diện các chức năng.
+                We acquire pre-owned devices and perform a thorough inspection of all functions.
               </p>
             </div>
-            
+
             <div className="bg-neutral-50 dark:bg-neutral-800 p-6 rounded-lg relative">
               <div className="absolute -top-3 -left-3 bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold">
                 2
               </div>
-              <h3 className="font-semibold mb-3 mt-2">Vệ Sinh & Khử Trùng</h3>
+              <h3 className="font-semibold mb-3 mt-2">Cleaning & Sanitization</h3>
               <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-                Thiết bị được vệ sinh kỹ lưỡng, khử trùng và làm mới bề mặt để loại bỏ vết bẩn và vi khuẩn.
+                Devices are thoroughly cleaned, sanitized, and refreshed to remove dirt and bacteria.
               </p>
             </div>
-            
+
             <div className="bg-neutral-50 dark:bg-neutral-800 p-6 rounded-lg relative">
               <div className="absolute -top-3 -left-3 bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold">
                 3
               </div>
-              <h3 className="font-semibold mb-3 mt-2">Sửa Chữa & Thay Thế</h3>
+              <h3 className="font-semibold mb-3 mt-2">Repair & Replacement</h3>
               <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-                Các linh kiện hỏng hóc được thay thế bằng linh kiện chính hãng, đảm bảo hoạt động như mới.
+                Faulty components are replaced with genuine parts, ensuring like-new operation.
               </p>
             </div>
-            
+
             <div className="bg-neutral-50 dark:bg-neutral-800 p-6 rounded-lg relative">
               <div className="absolute -top-3 -left-3 bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold">
                 4
               </div>
-              <h3 className="font-semibold mb-3 mt-2">Kiểm Định & Phân Loại</h3>
+              <h3 className="font-semibold mb-3 mt-2">Quality Assurance & Grading</h3>
               <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-                Sản phẩm trải qua hơn 30 bài kiểm tra và được phân loại theo tình trạng: Như mới, Tốt, hoặc Khá.
+                Products undergo over 30 tests and are graded by condition: Like New, Good, or Fair.
               </p>
             </div>
           </div>
         </div>
-        
+
         {/* FAQ section */}
         <div className="mt-16 bg-neutral-50 dark:bg-neutral-800 rounded-lg p-8">
-          <h2 className="text-2xl font-bold mb-6">Câu Hỏi Thường Gặp</h2>
+          <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
           <div className="space-y-6">
             <div>
-              <h3 className="font-semibold mb-2">Sản phẩm tân trang có an toàn không?</h3>
+              <h3 className="font-semibold mb-2">Are refurbished products safe?</h3>
               <p className="text-neutral-600 dark:text-neutral-300">
-                Hoàn toàn an toàn. Mỗi sản phẩm đều được kỹ thuật viên chuyên nghiệp kiểm tra kỹ lưỡng, 
-                sửa chữa và khử trùng. Chúng tôi chỉ bán những sản phẩm đạt tiêu chuẩn chất lượng cao nhất.
+                Absolutely safe. Each product is thoroughly inspected, repaired, and sanitized by professional technicians. We only sell products that meet the highest quality standards.
               </p>
             </div>
-            
+
             <div>
-              <h3 className="font-semibold mb-2">Chính sách bảo hành cho sản phẩm tân trang?</h3>
+              <h3 className="font-semibold mb-2">What is the warranty policy for refurbished products?</h3>
               <p className="text-neutral-600 dark:text-neutral-300">
-                Tất cả sản phẩm tân trang đều được bảo hành 12 tháng, giống như sản phẩm mới. 
-                Nếu phát sinh lỗi trong thời gian bảo hành, chúng tôi sẽ sửa chữa hoặc thay thế miễn phí.
+                All refurbished products are covered by a 12-month warranty, just like new products.  If any problems arise during the warranty period, we will repair or replace the product free of charge.
               </p>
             </div>
-            
+
             <div>
-              <h3 className="font-semibold mb-2">Pin của sản phẩm tân trang có bị hao mòn không?</h3>
+              <h3 className="font-semibold mb-2">Will the battery of a refurbished product be worn out?</h3>
               <p className="text-neutral-600 dark:text-neutral-300">
-                Chúng tôi kiểm tra kỹ lưỡng tình trạng pin của mỗi sản phẩm. Đối với các thiết bị có pin 
-                dưới 85% dung lượng thiết kế, chúng tôi sẽ thay pin mới. Thông tin về dung lượng pin luôn 
-                được hiển thị chi tiết trong mô tả sản phẩm.
+                We carefully check the battery condition of each product. For devices with a battery below 85% of its design capacity, we replace the battery with a new one.  Battery capacity information is always shown in detail in the product description.
               </p>
             </div>
           </div>

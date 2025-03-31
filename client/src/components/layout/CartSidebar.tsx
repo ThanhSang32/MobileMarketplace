@@ -22,7 +22,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
       <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose}></div>
       <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-lg transform transition-transform duration-300">
         <div className="p-4 flex justify-between items-center border-b">
-          <h2 className="font-semibold text-lg">Giỏ hàng ({cart?.itemCount || 0})</h2>
+          <h2 className="font-semibold text-lg">Cart ({cart?.itemCount || 0})</h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
             <X className="h-5 w-5" />
           </button>
@@ -30,7 +30,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
 
         <div className="overflow-y-auto h-[calc(100vh-180px)]">
           {isLoading ? (
-            <div className="p-4 text-center">Đang tải...</div>
+            <div className="p-4 text-center">Loading...</div>
           ) : cart?.items && cart.items.length > 0 ? (
             cart.items.map((item) => (
               <div key={item.id} className="p-4 border-b flex items-center">
@@ -73,9 +73,9 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
             ))
           ) : (
             <div className="p-8 text-center">
-              <p className="mb-4 text-gray-600">Giỏ hàng trống</p>
+              <p className="mb-4 text-gray-600">Your cart is empty</p>
               <Button onClick={onClose}>
-                Tiếp tục mua sắm
+                Continue Shopping
               </Button>
             </div>
           )}
@@ -84,12 +84,12 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
         {cart?.items && cart.items.length > 0 && (
           <div className="p-4 border-t">
             <div className="flex justify-between mb-2">
-              <span>Tổng phụ</span>
+              <span>Subtotal</span>
               <span className="font-semibold">${cart.subtotal.toFixed(2)}</span>
             </div>
             {cart.discount > 0 && (
               <div className="flex justify-between mb-2">
-                <span>Giảm giá</span>
+                <span>Discount</span>
                 <span className="font-semibold text-green-500">
                   -${cart.discount.toFixed(2)}
                 </span>
@@ -97,7 +97,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
             )}
             <Separator className="my-2" />
             <div className="flex justify-between mb-4">
-              <span>Tổng cộng</span>
+              <span>Total</span>
               <span className="font-semibold">${cart.total.toFixed(2)}</span>
             </div>
             <Button className="w-full bg-green-600 hover:bg-green-700 text-white" onClick={() => setLocation("/checkout")}>

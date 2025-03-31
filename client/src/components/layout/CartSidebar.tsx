@@ -12,7 +12,7 @@ interface CartSidebarProps {
 }
 
 const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
-  const { cart, updateQuantity, removeItem, clearCart, isLoading } = useSimpleCart();
+  const { cart, updateQuantity, removeFromCart, clearCart, isLoading } = useCart();
   const [isUpdating, setIsUpdating] = useState(false);
   
   useEffect(() => {
@@ -38,7 +38,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
       if (currentQuantity > 1) {
         updateQuantity(itemId, currentQuantity - 1);
       } else {
-        removeItem(itemId);
+        removeFromCart(itemId);
       }
     } finally {
       setIsUpdating(false);

@@ -120,7 +120,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-neutral-700 pt-6 mt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-neutral-400 text-sm mb-4 md:mb-0">
-              &copy; {new Date().getFullYear()} TechStore. All rights reserved.
+              &copy; {new Date().getFullYear()} SangStore. All rights reserved.
             </p>
             <div className="flex space-x-6">
               <Link href="/privacy" className="text-neutral-400 hover:text-white text-sm">

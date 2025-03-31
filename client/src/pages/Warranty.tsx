@@ -131,7 +131,7 @@ const Warranty: React.FC = () => {
                   <div className="bg-primary/10 rounded-full h-12 w-12 flex items-center justify-center mx-auto mb-4">
                     <span className="text-primary font-bold text-xl">1</span>
                   </div>
-                  <h3 className="font-semibold mb-3">Liên Hệ TechStore</h3>
+                  <h3 className="font-semibold mb-3">Liên Hệ SangStore</h3>
                   <p className="text-neutral-600 dark:text-neutral-300 text-sm">
                     Thông báo về sự cố sản phẩm qua hotline 1800-123-456 hoặc mang trực tiếp đến cửa hàng
                   </p>

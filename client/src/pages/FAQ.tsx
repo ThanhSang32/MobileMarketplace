@@ -62,8 +62,8 @@ const FAQ: React.FC = () => {
           answer: "Có, bạn có thể theo dõi đơn hàng của mình. Sau khi đặt hàng, bạn sẽ nhận được email xác nhận kèm theo mã đơn hàng và liên kết theo dõi. Bạn cũng có thể đăng nhập vào tài khoản TechStore của mình để theo dõi trạng thái đơn hàng."
         },
         {
-          question: "TechStore có giao hàng quốc tế không?",
-          answer: "Hiện tại, TechStore chỉ giao hàng trong lãnh thổ Việt Nam. Chúng tôi đang mở rộng dịch vụ để phục vụ khách hàng quốc tế và sẽ thông báo khi dịch vụ này được triển khai."
+          question: "SangStore có giao hàng quốc tế không?",
+          answer: "Hiện tại, SangStore chỉ giao hàng trong lãnh thổ Việt Nam. Chúng tôi đang mở rộng dịch vụ để phục vụ khách hàng quốc tế và sẽ thông báo khi dịch vụ này được triển khai."
         },
         {
           question: "Tôi cần làm gì nếu đơn hàng bị trễ?",
@@ -76,7 +76,7 @@ const FAQ: React.FC = () => {
       items: [
         {
           question: "Làm thế nào để yêu cầu bảo hành sản phẩm?",
-          answer: "Để yêu cầu bảo hành, bạn có thể mang sản phẩm đến trực tiếp cửa hàng TechStore gần nhất hoặc gửi sản phẩm đến trung tâm bảo hành của chúng tôi. Đừng quên mang theo hóa đơn mua hàng hoặc phiếu bảo hành. Bạn cũng có thể liên hệ bộ phận CSKH để được hướng dẫn chi tiết."
+          answer: "Để yêu cầu bảo hành, bạn có thể mang sản phẩm đến trực tiếp cửa hàng SangStore gần nhất hoặc gửi sản phẩm đến trung tâm bảo hành của chúng tôi. Đừng quên mang theo hóa đơn mua hàng hoặc phiếu bảo hành. Bạn cũng có thể liên hệ bộ phận CSKH để được hướng dẫn chi tiết."
         },
         {
           question: "Chính sách đổi trả sản phẩm như thế nào?",

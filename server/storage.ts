@@ -360,25 +360,38 @@ export class MemStorage implements IStorage {
         price: 1399,
         category: "laptop",
         brand: "HP",
-        image: "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?q=80&w=400&auto=format&fit=crop",
+        image: "https://images.unsplash.com/photo-1587033411391-5d9e51cce126?q=80&w=400&auto=format&fit=crop",
         rating: 4.5,
-        reviews: 45,
-        discount: 5,
-        isNew: true,
+        reviews: 55,
+        discount: 10,
+        isNew: false,
         stock: 30
       },
       {
         name: "Asus ROG Zephyrus",
-        description: "Gaming laptop with RTX 3080 and AMD Ryzen 9.",
+        description: "Premium gaming laptop with RTX 4080",
         price: 2199,
-        category: "laptop",
+        category: "laptop", 
         brand: "Asus",
-        image: "https://images.unsplash.com/photo-1595810587765-817266ee5434?q=80&w=400&auto=format&fit=crop",
+        image: "https://images.unsplash.com/photo-1587033411391-5d9e51cce126?q=80&w=400&auto=format&fit=crop",
         rating: 4.8,
-        reviews: 40,
-        discount: 0,
+        reviews: 85,
+        discount: 5,
         isNew: true,
-        stock: 10
+        stock: 20
+      },
+      {
+        name: "MSI Creator Z16",
+        description: "Creator focused laptop with stunning display",
+        price: 1899,
+        category: "laptop",
+        brand: "MSI",
+        image: "https://images.unsplash.com/photo-1587033411391-5d9e51cce126?q=80&w=400&auto=format&fit=crop",
+        rating: 4.6,
+        reviews: 45,
+        discount: 12,
+        isNew: true,
+        stock: 25
       },
       {
         name: "Acer Swift 5",
@@ -518,13 +531,39 @@ export class MemStorage implements IStorage {
         description: "Multimedia tablet with premium audio.",
         price: 299,
         category: "tablet",
-        brand: "Asus",
+        brand: "ASUS",
         image: "https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=400&auto=format&fit=crop",
         rating: 4.1,
         reviews: 35,
-        discount: 25,
+        discount: 15,
         isNew: false,
-        stock: 15
+        stock: 25
+      },
+      {
+        name: "Lenovo Tab P12 Pro",
+        description: "Premium Android tablet with Snapdragon processor",
+        price: 699,
+        category: "tablet",
+        brand: "Lenovo",
+        image: "https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=400&auto=format&fit=crop",
+        rating: 4.5,
+        reviews: 65,
+        discount: 8,
+        isNew: true,
+        stock: 30
+      },
+      {
+        name: "Microsoft Surface Pro 9",
+        description: "Versatile Windows tablet with keyboard support",
+        price: 999,
+        category: "tablet",
+        brand: "Microsoft",
+        image: "https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=400&auto=format&fit=crop",
+        rating: 4.7,
+        reviews: 85,
+        discount: 10,
+        isNew: true,
+        stock: 35
       }
     ];
 

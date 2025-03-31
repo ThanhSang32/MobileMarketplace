@@ -1,4 +1,5 @@
-# BÁO CÁO ĐỒ ÁN SANGSTORE
+
+# SANGSTORE PROJECT REPORT
 
 ## ABSTRACT
 
@@ -8,34 +9,46 @@ This project presents the development of SangStore, a modern e-commerce platform
 
 I would like to express my sincere gratitude to my project supervisor for their invaluable guidance and support throughout the development of this e-commerce platform. Their expertise and constructive feedback have significantly contributed to the success of this project.
 
-## CHƯƠNG 1: TỔNG QUAN
+## CHAPTER 1: OVERVIEW
 
-### 1.1 Giới thiệu
-SangStore là một nền tảng thương mại điện tử chuyên về các sản phẩm công nghệ, được xây dựng với mục tiêu tạo ra trải nghiệm mua sắm trực tuyến thuận tiện và an toàn cho người dùng. Dự án sử dụng các công nghệ web hiện đại và tuân thủ các tiêu chuẩn phát triển phần mềm.
+### 1.1 Introduction
+SangStore is an e-commerce platform specializing in technology products, built with modern web technologies to provide users with a convenient and secure online shopping experience. The project utilizes contemporary technologies and adheres to software development standards.
 
-### 1.2 Mục tiêu
-#### Mục tiêu tổng quát
-- Xây dựng một nền tảng thương mại điện tử hoàn chỉnh
-- Tối ưu hóa trải nghiệm người dùng
-- Đảm bảo tính bảo mật và hiệu suất cao
+### 1.2 Objectives
+#### General Objectives
+- Build a complete e-commerce platform
+- Optimize user experience with a friendly interface
+- Integrate secure online payments
+- Implement efficient order and inventory management
 
-#### Mục tiêu cụ thể
-- Phát triển hệ thống quản lý sản phẩm đa dạng (Thêm, sửa, xóa sản phẩm; Phân loại sản phẩm; Quản lý kho hàng)
-- Tích hợp thanh toán trực tuyến an toàn
-- Xây dựng giao diện người dùng responsive
-- Tối ưu hóa quy trình mua hàng (Tìm kiếm sản phẩm; Giỏ hàng; Thanh toán; So sánh sản phẩm)
+#### Specific Objectives
+##### System Functionality
+- Develop diverse product management system for multiple categories (phones, laptops, tablets, accessories)
+- Implement intelligent search and filtering features
+- Integrate secure online payment through Stripe
+- Build automated order management system
 
+##### User Experience
+- Design user-friendly interface, accessible on all devices
+- Optimize page load speed and system performance
+- Provide detailed product information and high-quality images
+- Integrate product rating and review features
 
-### 1.3 Phạm vi
-- Quản lý danh mục sản phẩm công nghệ
-- Quản lý đơn hàng và thanh toán
-- Quản lý người dùng và xác thực
-- Tích hợp các dịch vụ bên thứ ba (Stripe)
+##### Management and Operations
+- Build efficient inventory management system
+- Track and analyze sales data
+- Automate order processing
+- Manage customer information and purchase history
 
+##### Security
+- Ensure customer personal information security
+- Secure payment transactions
+- User authentication and authorization
+- System data protection
 
-## CHƯƠNG 2: CƠ SỞ LÝ THUYẾT
+## CHAPTER 2: THEORETICAL FOUNDATION
 
-### 2.1 Kiến trúc hệ thống
+### 2.1 System Architecture
 #### Frontend
 - React 18
 - TypeScript
@@ -43,7 +56,7 @@ SangStore là một nền tảng thương mại điện tử chuyên về các s
 - Shadcn UI
 - React Query
 - React Hook Form
-- Wouter: Routing cho ứng dụng
+- Wouter: Application routing
 
 #### Backend
 - Node.js
@@ -53,8 +66,7 @@ SangStore là một nền tảng thương mại điện tử chuyên về các s
 - Session-based authentication
 - RESTful API
 
-
-### 2.2 Công nghệ sử dụng
+### 2.2 Technologies Used
 #### Development Tools
 - Visual Studio Code
 - Git
@@ -64,49 +76,45 @@ SangStore là một nền tảng thương mại điện tử chuyên về các s
 - TypeScript: Type checking
 - Stripe: Payment processing
 
+## CHAPTER 3: ANALYSIS AND DESIGN
 
-## CHƯƠNG 3: PHÂN TÍCH VÀ THIẾT KẾ
+### 3.1 System Requirements
+#### Functional Requirements
+- User registration/login
+- Shopping cart management
+- Product search and filtering
+- Online payment
+- Order management (Order creation; Status tracking; Order processing)
 
-### 3.1 Yêu cầu hệ thống
-#### Yêu cầu chức năng
-- Đăng ký/đăng nhập người dùng
-- Quản lý giỏ hàng
-- Tìm kiếm và lọc sản phẩm
-- Thanh toán trực tuyến
-- Quản lý đơn hàng (Tạo đơn hàng; Theo dõi trạng thái; Xử lý đơn hàng)
+#### Non-functional Requirements
+- Fast response time
+- User-friendly interface
+- Data security (Data encryption; User authentication; Payment information protection)
+- Scalability (Data backup; Error handling; Recovery capability)
 
-#### Yêu cầu phi chức năng
-- Thời gian phản hồi nhanh
-- Giao diện thân thiện
-- Bảo mật dữ liệu (Mã hóa dữ liệu; Xác thực người dùng; Bảo vệ thông tin thanh toán)
-- Khả năng mở rộng (Sao lưu dữ liệu; Xử lý lỗi; Khả năng phục hồi)
+### 3.2 System Design
+#### Database Design
+- Users Table (id: Primary key, email: String, password: String (hashed), name: String, role: Enum)
+- Products Table (id: Primary key, name: String, description: Text, price: Number, category: String, stock: Number)
+- Orders Table (id: Primary key, userId: Foreign key, status: String, total: Number, created_at: Timestamp)
+- OrderItems Table (id: Primary key, orderId: Foreign key, productId: Foreign key, quantity: Number, price: Number)
+- Categories Table
 
-### 3.2 Thiết kế hệ thống
-#### Thiết kế cơ sở dữ liệu
-- Bảng Users (id: Primary key, email: String, password: String (hashed), name: String, role: Enum)
-- Bảng Products (id: Primary key, name: String, description: Text, price: Number, category: String, stock: Number)
-- Bảng Orders (id: Primary key, userId: Foreign key, status: String, total: Number, created_at: Timestamp)
-- Bảng OrderItems (id: Primary key, orderId: Foreign key, productId: Foreign key, quantity: Number, price: Number)
-- Bảng Categories
-
-
-#### Thiết kế giao diện
+#### Interface Design
 - Responsive design
 - Mobile-first approach
 - Dark mode support
 
+## CHAPTER 4: IMPLEMENTATION
 
-## CHƯƠNG 4: TRIỂN KHAI
-
-### 4.1 Môi trường phát triển
+### 4.1 Development Environment
 - Node.js runtime
 - npm package manager
 - Replit IDE
 - Git version control
 - PostgreSQL: Database
 
-
-### 4.2 Cấu trúc mã nguồn
+### 4.2 Source Code Structure
 ```
 ├── client/          # Frontend React application
 ├── server/          # Backend Express server
@@ -114,25 +122,25 @@ SangStore là một nền tảng thương mại điện tử chuyên về các s
 └── docs/           # Documentation
 ```
 
-### 4.3 Triển khai các module
-#### Module người dùng
-- Đăng ký/đăng nhập
-- Quản lý thông tin cá nhân
-- Xác thực JWT
+### 4.3 Module Implementation
+#### User Module
+- Registration/Login
+- Personal information management
+- JWT authentication
 
-#### Module sản phẩm
-- Danh sách sản phẩm
-- Chi tiết sản phẩm
-- Tìm kiếm và lọc
+#### Product Module
+- Product listing
+- Product details
+- Search and filtering
 
-#### Module giỏ hàng
-- Thêm/xóa sản phẩm
-- Cập nhật số lượng
-- Tính tổng tiền
+#### Shopping Cart Module
+- Add/remove products
+- Update quantities
+- Calculate total
 
-## CHƯƠNG 5: KIỂM THỬ VÀ ĐÁNH GIÁ
+## CHAPTER 5: TESTING AND EVALUATION
 
-### 5.1 Kiểm thử
+### 5.1 Testing
 #### Unit Testing
 - Jest framework
 - React Testing Library
@@ -143,39 +151,38 @@ SangStore là một nền tảng thương mại điện tử chuyên về các s
 - User flow testing
 - Payment integration testing
 
-### 5.2 Đánh giá kết quả
-#### Ưu điểm
-- Giao diện người dùng thân thiện
-- Hiệu suất tốt
-- Tính năng đầy đủ
-- Bảo mật cao
-- Codebase dễ maintain
-- Khả năng mở rộng cao
+### 5.2 Results Evaluation
+#### Advantages
+- User-friendly interface
+- Good performance
+- Complete functionality
+- High security
+- Maintainable codebase
+- High scalability
 
+#### Limitations
+- Needs SEO optimization
+- Lacks live chat feature
+- Additional payment methods needed (no mobile app; no analytics dashboard)
 
-#### Hạn chế
-- Cần tối ưu hóa thêm cho SEO
-- Chưa có tính năng chat trực tiếp
-- Cần bổ sung thêm phương thức thanh toán (chưa có mobile app; chưa có analytics dashboard)
+## CHAPTER 6: CONCLUSION
 
-## CHƯƠNG 6: KẾT LUẬN
+### 6.1 Achievements
+- Completed all set objectives
+- Built a complete system
+- Successfully applied modern technologies
 
-### 6.1 Kết quả đạt được
-- Hoàn thành các mục tiêu đề ra
-- Xây dựng được hệ thống hoàn chỉnh
-- Áp dụng được các công nghệ hiện đại
-
-### 6.2 Hướng phát triển
-- Tích hợp AI cho gợi ý sản phẩm
-- Thêm tính năng chat trực tiếp
-- Mở rộng danh mục sản phẩm
-- Tối ưu hóa hiệu suất (SEO optimization; Performance improvement; Mobile app development; Analytics integration)
+### 6.2 Future Development
+- AI integration for product recommendations
+- Add live chat feature
+- Expand product categories
+- Performance optimization (SEO optimization; Performance improvement; Mobile app development; Analytics integration)
 - Multi-language support
 - Multiple payment methods
 - Marketplace features
 - Social media integration
 
-## TÀI LIỆU THAM KHẢO
+## REFERENCES
 
 1. React Documentation - https://reactjs.org/docs
 2. TypeScript Handbook - https://www.typescriptlang.org/docs/

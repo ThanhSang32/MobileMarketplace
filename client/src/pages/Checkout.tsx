@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Radio } from '@/components/ui/radio-group';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
@@ -318,15 +318,25 @@ const Checkout: React.FC = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-md">
                         <div className="col-span-2">
                           <Label>Card Number</Label>
-                          <Input placeholder="1234 5678 9012 3456" />
+                          <Input placeholder="1234 5678 9012 3456" defaultValue="4242 4242 4242 4242" />
+                          <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                            Đây là số thẻ test - không thực hiện giao dịch thật
+                          </p>
                         </div>
                         <div>
                           <Label>Expiration Date</Label>
-                          <Input placeholder="MM/YY" />
+                          <Input placeholder="MM/YY" defaultValue="12/25" />
                         </div>
                         <div>
                           <Label>CVC</Label>
-                          <Input placeholder="123" />
+                          <Input placeholder="123" defaultValue="123" />
+                        </div>
+                        <div className="col-span-2 mt-2">
+                          <div className="flex space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="24" viewBox="0 0 40 24"><path fill="#253B80" d="M34 24H6c-3.3 0-6-2.7-6-6V6c0-3.3 2.7-6 6-6h28c3.3 0 6 2.7 6 6v12c0 3.3-2.7 6-6 6z"/><path fill="#179BD7" d="M25.4 7.2c-.2-.7-.8-1.2-1.5-1.2h-5.6c-.3 0-.6.2-.7.5L15 18.9c0 .2.1.4.4.4h2.8c.3 0 .5-.2.6-.5l.6-2.4c.1-.3.3-.5.6-.5h1.9c2.7 0 4.9-2 5.4-4.7.2-1.4 0-2.5-.5-3.3-.5-.4-1.2-.7-2-1zm.3 3.7c-.3 1.6-1.5 2.6-3.1 2.6H21l.6-2.8c0-.2.2-.3.4-.3h.8c.9 0 1.7 0 2.3.6.2.2.4.6.4 1.1-.1-.1 0-.1 0-.1z"/><path fill="#253B80" d="M12.7 7.2c-.2-.7-.8-1.2-1.5-1.2H5.6c-.3 0-.6.2-.7.5L2.3 18.9c0 .2.1.4.4.4h2.7c.3 0 .5-.2.6-.4l.7-2.5c.1-.3.3-.5.6-.5h1.9c2.7 0 4.9-2 5.4-4.7.2-1.4 0-2.5-.5-3.3-.5-.4-1.2-.7-2-1zm.2 3.7c-.3 1.6-1.5 2.6-3.1 2.6H8.2l.6-2.8c0-.2.2-.3.4-.3h.8c.9 0 1.7 0 2.3.6.3.2.4.6.4 1.1l.1-.1z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="24" viewBox="0 0 40 24"><path fill="#FFB600" d="M34 24H6c-3.3 0-6-2.7-6-6V6c0-3.3 2.7-6 6-6h28c3.3 0 6 2.7 6 6v12c0 3.3-2.7 6-6 6z"/><path fill="#F7981D" d="M40 12c0 3.3-2.7 6-6 6H6c-3.3 0-6-2.7-6-6"/><path fill="#E79800" d="M40 12c0-3.3-2.7-6-6-6H6c-3.3 0-6 2.7-6 6"/><circle fill="#FFF" cx="20" cy="12" r="9"/><path fill="#1A1F71" d="M21.1 5.9l-1.2 5.5h-1.9l1.2-5.5h1.9zm7.6 3.5c-.4-.2-.9-.2-1.4-.2h-2.6l-.2.8h2.5c.2 0 .5 0 .7.1.2.2.2.4.2.7-.1.3-.2.5-.3.6-.2.2-.5.2-.9.2h-.8l-.2.8h.9c.2.8.6 1.3 1.6 1.3.4 0 .7-.1 1-.3l.3-.3-.4-.5c-.2.2-.4.3-.7.3-.2 0-.6-.2-.6-.6h1.3c.2-.6.2-1.3-.4-1.9zm-.8 1.4h-.9c0-.5.3-.5.5-.5.3 0 .4.2.4.5zm-6.6-1.4c-.5-.2-1.1-.2-1.6.2-.4.3-.6.7-.6 1.2-.1.9.5 1.3 1.2 1.6.3.1.6.2.6.5 0 .3-.4.4-.6.4-.4 0-.8-.2-1-.4l-.3.5c.4.3.8.5 1.3.5.6 0 1.2-.3 1.3-.9.2-.7 0-1.1-.7-1.5-.3-.2-.7-.2-.7-.5 0-.2.2-.3.4-.3.3 0 .6.1.8.2l.2-.5zm-3.7-.2h-1.3l-1.2 3h-1.6l-1-2.4c.4-.2.8-.6 1-1 .2-.5.2-1.1 0-1.6h1.4c.2.4.2.9 0 1.3-.1.2-.3.3-.5.3h-.2l.5 1.4.9-2.6h1.9l-1.2 5.5h-1.9l.8-3.9zm-10.5 0c-.5 0-1 .3-1.1.8l-.7 3.6h1.2l.5-2.4h.6c.2 0 .3.1.3.2.1.3 0 .5-.1.8L7 11.2h1.2l.1-.7c.2-.7.2-1-.3-1.3.2-.2.4-.4.5-.7.1-.3 0-.6-.1-.8-.3-.4-.7-.4-1.2-.4zm.1.9c.1 0 .2 0 .3.1.1.1.1.2.1.3-.1.2-.2.3-.4.3h-.6l.2-.7h.4z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="24" viewBox="0 0 40 24"><path fill="#FFF" d="M34 24H6c-3.3 0-6-2.7-6-6V6c0-3.3 2.7-6 6-6h28c3.3 0 6 2.7 6 6v12c0 3.3-2.7 6-6 6z"/><path fill="#DFE3E8" d="M40 12c0 3.3-2.7 6-6 6H6c-3.3 0-6-2.7-6-6"/><path fill="#34495E" d="M4 12a2 2 0 100 4 2 2 0 000-4zm0 3a1 1 0 110-2 1 1 0 010 2z"/><path fill="#34495E" d="M36 12a2 2 0 100 4 2 2 0 000-4zm0 3a1 1 0 110-2 1 1 0 010 2z"/><path fill="#34495E" d="M25 12.1a2 2 0 100 3.9 2 2 0 000-3.9zm0 2.9a1 1 0 110-2 1 1 0 010 2zm-10-2.9a2 2 0 100 3.9 2 2 0 000-3.9zm0 2.9a1 1 0 110-2 1 1 0 010 2zm5-2.9a2 2 0 100 3.9 2 2 0 000-3.9zm0 2.9a1 1 0 110-2 1 1 0 010 2z"/><path fill="#34495E" d="M12 8v8h16V8H12zm1 1h14v6H13V9z"/></svg>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -407,7 +417,7 @@ const Checkout: React.FC = () => {
                       </p>
                     </div>
                     <div className="font-semibold">
-                      ${(item.product.price * (1 - item.product.discount / 100) * item.quantity).toFixed(2)}
+                      ${(item.product.price * (1 - (item.product.discount || 0) / 100) * item.quantity).toFixed(2)}
                     </div>
                   </div>
                 ))}

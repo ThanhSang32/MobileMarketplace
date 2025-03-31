@@ -25,9 +25,10 @@ const ProductDetail: React.FC = () => {
     queryKey: ['/api/products'],
   });
   
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (product) {
-      addToCart(product.id, quantity);
+      await addToCart(product.id, quantity);
+      // Hiển thị thông báo thành công (đã được xử lý trong CartContext)
     }
   };
   
@@ -97,7 +98,7 @@ const ProductDetail: React.FC = () => {
   };
   
   // Calculate final price after discount
-  const finalPrice = product.price * (1 - product.discount / 100);
+  const finalPrice = product.price * (1 - (product.discount || 0) / 100);
 
   return (
     <div className="bg-white dark:bg-neutral-900">
@@ -111,7 +112,7 @@ const ProductDetail: React.FC = () => {
                   New
                 </Badge>
               )}
-              {product.discount > 0 && (
+              {product.discount && product.discount > 0 && (
                 <Badge className="absolute top-4 left-4 z-10 bg-green-500 text-white text-xs px-2 py-1 rounded-md">
                   -{product.discount}%
                 </Badge>
@@ -145,13 +146,13 @@ const ProductDetail: React.FC = () => {
                 <span className="text-3xl font-bold">
                   ${finalPrice.toFixed(2)}
                 </span>
-                {product.discount > 0 && (
+                {product.discount && product.discount > 0 && (
                   <span className="text-lg text-neutral-500 dark:text-neutral-400 line-through">
                     ${product.price.toFixed(2)}
                   </span>
                 )}
               </div>
-              {product.discount > 0 && (
+              {product.discount && product.discount > 0 && (
                 <p className="text-green-500 mt-1">
                   You save: ${(product.price - finalPrice).toFixed(2)} ({product.discount}%)
                 </p>

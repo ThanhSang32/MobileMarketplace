@@ -1,9 +1,10 @@
-import React from "react";
-import { X, Plus, Minus, Trash } from "@/components/ui/icons";
+import React, { useState } from "react";
+import { X, Plus, Minus, Trash, ArrowRight } from "@/components/ui/icons";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -11,19 +12,39 @@ interface CartSidebarProps {
 }
 
 const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
-  const { cart, updateQuantity, removeItem, isLoading } = useCart();
+  const { cart, updateQuantity, removeItem, clearCart, isLoading } = useCart();
+  const [isUpdating, setIsUpdating] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleIncreaseQuantity = (itemId: number, currentQuantity: number) => {
-    updateQuantity(itemId, currentQuantity + 1);
+  const handleIncreaseQuantity = async (itemId: number, currentQuantity: number) => {
+    setIsUpdating(true);
+    try {
+      await updateQuantity(itemId, currentQuantity + 1);
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
-  const handleDecreaseQuantity = (itemId: number, currentQuantity: number) => {
-    if (currentQuantity > 1) {
-      updateQuantity(itemId, currentQuantity - 1);
-    } else {
-      removeItem(itemId);
+  const handleDecreaseQuantity = async (itemId: number, currentQuantity: number) => {
+    setIsUpdating(true);
+    try {
+      if (currentQuantity > 1) {
+        await updateQuantity(itemId, currentQuantity - 1);
+      } else {
+        await removeItem(itemId);
+      }
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+  
+  const handleClearCart = async () => {
+    setIsUpdating(true);
+    try {
+      await clearCart();
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -81,11 +102,22 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
-                  <span className="font-semibold">${item.product.price}</span>
+                  {item.product.discount && item.product.discount > 0 ? (
+                    <>
+                      <span className="font-semibold">
+                        ${(item.product.price * (1 - (item.product.discount || 0) / 100)).toFixed(2)}
+                      </span>
+                      <span className="text-xs text-neutral-500 dark:text-neutral-400 line-through">
+                        ${item.product.price.toFixed(2)}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="font-semibold">${item.product.price.toFixed(2)}</span>
+                  )}
                   <button 
                     className="text-neutral-500 dark:text-neutral-400 hover:text-red-500 dark:hover:text-red-500 mt-2"
                     onClick={() => removeItem(item.id)}
-                    disabled={isLoading}
+                    disabled={isLoading || isUpdating}
                     aria-label="Remove item"
                   >
                     <Trash className="h-4 w-4" />

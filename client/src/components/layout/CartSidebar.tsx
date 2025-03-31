@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { X, Plus, Minus, Trash } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
-import { Link, useLocation } from "wouter"; // Added useNavigate
+import { Link, useLocation } from "wouter";
 import { Separator } from "@/components/ui/separator";
 
 interface CartSidebarProps {
@@ -13,7 +13,7 @@ interface CartSidebarProps {
 const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
   const { cart, updateQuantity, removeFromCart, clearCart, isLoading } = useCart();
   const [isUpdating, setIsUpdating] = useState(false);
-  const [_, setLocation] = useLocation(); // Added useNavigate hook
+  const [_, setLocation] = useLocation();
 
   if (!isOpen) return null;
 
@@ -102,7 +102,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
             </div>
             <Button className="w-full bg-green-600 hover:bg-green-700 text-white" onClick={() => setLocation("/checkout")}>
               Thanh toán
-            </Button> {/* Replaced Link with Button and added onClick */}
+            </Button>
           </div>
         )}
       </div>

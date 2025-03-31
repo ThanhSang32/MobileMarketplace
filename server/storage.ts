@@ -240,7 +240,7 @@ export class MemStorage implements IStorage {
         price: 699,
         category: "phone",
         brand: "Xiaomi",
-        image: "https://images.unsplash.com/photo-1598327105740-820e04db502e?q=80&w=400&auto=format&fit=crop",
+        image: "/images/products/xiaomi-mi11.jpg",
         rating: 4.3,
         reviews: 85,
         discount: 15,

@@ -7,7 +7,7 @@ const Warranty: React.FC = () => {
     <div className="bg-white dark:bg-neutral-900">
       <div className="container mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold mb-8 text-center">Chính Sách Bảo Hành</h1>
-        
+
         <div className="max-w-4xl mx-auto">
           {/* Warranty Overview */}
           <section>
@@ -16,12 +16,12 @@ const Warranty: React.FC = () => {
               <h2 className="text-2xl font-bold">Tổng Quan Chính Sách Bảo Hành</h2>
             </div>
             <Separator className="mb-6" />
-            
+
             <div className="bg-neutral-50 dark:bg-neutral-800 p-6 rounded-lg mb-8">
               <p className="text-neutral-600 dark:text-neutral-300 mb-4">
                 TechStore cam kết mang đến cho khách hàng sự an tâm khi mua sắm với chính sách bảo hành toàn diện. Chúng tôi cung cấp dịch vụ bảo hành chính hãng cho tất cả sản phẩm, đảm bảo khách hàng không phải lo lắng khi sản phẩm gặp sự cố.
               </p>
-              
+
               <h3 className="text-lg font-semibold mb-2">Cam Kết Của TechStore:</h3>
               <ul className="list-disc pl-6 space-y-2 text-neutral-600 dark:text-neutral-300">
                 <li>Bảo hành chính hãng theo tiêu chuẩn của nhà sản xuất</li>
@@ -31,7 +31,7 @@ const Warranty: React.FC = () => {
                 <li>Hỗ trợ tư vấn kỹ thuật 24/7</li>
               </ul>
             </div>
-            
+
             <div className="space-y-8">
               <div>
                 <h3 className="text-xl font-semibold mb-3">Thời Gian Bảo Hành</h3>
@@ -80,7 +80,7 @@ const Warranty: React.FC = () => {
                   <em>Lưu ý: Thời gian bảo hành được tính từ ngày xuất hóa đơn. Khách hàng vui lòng giữ hóa đơn và phiếu bảo hành để được hỗ trợ khi cần thiết.</em>
                 </p>
               </div>
-              
+
               <div>
                 <h3 className="text-xl font-semibold mb-3">Phạm Vi Bảo Hành</h3>
                 <p className="text-neutral-600 dark:text-neutral-300 mb-4">
@@ -93,7 +93,7 @@ const Warranty: React.FC = () => {
                   <li>Sự cố về pin (nằm trong tiêu chuẩn của nhà sản xuất)</li>
                   <li>Lỗi về màn hình (điểm chết, sọc màn hình, không hiển thị)</li>
                 </ul>
-                
+
                 <p className="text-neutral-600 dark:text-neutral-300 mt-6 mb-4">
                   Các trường hợp <span className="font-semibold">KHÔNG</span> được bảo hành:
                 </p>
@@ -108,11 +108,11 @@ const Warranty: React.FC = () => {
               </div>
             </div>
           </section>
-          
+
           <div className="py-8">
             <Separator />
           </div>
-          
+
           {/* Warranty Process */}
           <section>
             <div className="flex items-center gap-4 mb-6">
@@ -120,12 +120,12 @@ const Warranty: React.FC = () => {
               <h2 className="text-2xl font-bold">Quy Trình Bảo Hành</h2>
             </div>
             <Separator className="mb-6" />
-            
+
             <div className="space-y-6">
               <p className="text-neutral-600 dark:text-neutral-300">
                 Để đảm bảo việc bảo hành diễn ra thuận lợi và nhanh chóng, khách hàng vui lòng thực hiện theo quy trình sau:
               </p>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-neutral-50 dark:bg-neutral-800 p-6 rounded-lg text-center">
                   <div className="bg-primary/10 rounded-full h-12 w-12 flex items-center justify-center mx-auto mb-4">
@@ -136,7 +136,7 @@ const Warranty: React.FC = () => {
                     Thông báo về sự cố sản phẩm qua hotline 1800-123-456 hoặc mang trực tiếp đến cửa hàng
                   </p>
                 </div>
-                
+
                 <div className="bg-neutral-50 dark:bg-neutral-800 p-6 rounded-lg text-center">
                   <div className="bg-primary/10 rounded-full h-12 w-12 flex items-center justify-center mx-auto mb-4">
                     <span className="text-primary font-bold text-xl">2</span>
@@ -146,7 +146,7 @@ const Warranty: React.FC = () => {
                     Nhân viên kỹ thuật sẽ kiểm tra sản phẩm và xác định nguyên nhân lỗi
                   </p>
                 </div>
-                
+
                 <div className="bg-neutral-50 dark:bg-neutral-800 p-6 rounded-lg text-center">
                   <div className="bg-primary/10 rounded-full h-12 w-12 flex items-center justify-center mx-auto mb-4">
                     <span className="text-primary font-bold text-xl">3</span>
@@ -157,11 +157,11 @@ const Warranty: React.FC = () => {
                   </p>
                 </div>
               </div>
-              
+
               <div className="mt-4 text-center">
                 <div className="w-1 h-8 bg-neutral-200 dark:bg-neutral-700 mx-auto"></div>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mx-auto max-w-2xl">
                 <div className="bg-neutral-50 dark:bg-neutral-800 p-6 rounded-lg text-center">
                   <div className="bg-primary/10 rounded-full h-12 w-12 flex items-center justify-center mx-auto mb-4">
@@ -172,7 +172,7 @@ const Warranty: React.FC = () => {
                     Kiểm tra kỹ lưỡng sau khi sửa chữa để đảm bảo sản phẩm hoạt động hoàn hảo
                   </p>
                 </div>
-                
+
                 <div className="bg-neutral-50 dark:bg-neutral-800 p-6 rounded-lg text-center">
                   <div className="bg-primary/10 rounded-full h-12 w-12 flex items-center justify-center mx-auto mb-4">
                     <span className="text-primary font-bold text-xl">5</span>
@@ -183,18 +183,18 @@ const Warranty: React.FC = () => {
                   </p>
                 </div>
               </div>
-              
+
               <div className="bg-primary/10 p-6 rounded-lg mt-8">
-                <h3 className="text-lg font-semibold mb-3">Thời Gian Xử Lý Bảo Hành</h3>
+                <h3 className="text-xl font-semibold mb-3">Warranty Processing Time</h3>
                 <ul className="list-disc pl-6 space-y-2 text-neutral-600 dark:text-neutral-300">
                   <li>
-                    <span className="font-medium">Xử lý nhanh (1-3 ngày làm việc):</span> Áp dụng cho các lỗi nhỏ, có sẵn linh kiện thay thế
+                    <span className="font-medium">Fast processing (1-3 business days):</span> Applies to minor issues with available replacement parts
                   </li>
                   <li>
-                    <span className="font-medium">Xử lý tiêu chuẩn (3-10 ngày làm việc):</span> Áp dụng cho các lỗi phức tạp hơn, cần thời gian kiểm tra kỹ
+                    <span className="font-medium">Standard processing (3-10 business days):</span> Applies to more complex issues requiring thorough inspection
                   </li>
                   <li>
-                    <span className="font-medium">Xử lý đặc biệt (10-30 ngày):</span> Áp dụng cho các trường hợp cần gửi về nhà sản xuất hoặc đợi linh kiện đặc biệt
+                    <span className="font-medium">Special processing (10-30 days):</span> Applies to cases requiring manufacturer return or special parts ordering
                   </li>
                 </ul>
                 <p className="text-neutral-600 dark:text-neutral-300 mt-4">
@@ -203,11 +203,11 @@ const Warranty: React.FC = () => {
               </div>
             </div>
           </section>
-          
+
           <div className="py-8">
             <Separator />
           </div>
-          
+
           {/* Extended Warranty */}
           <section>
             <div className="flex items-center gap-4 mb-6">
@@ -215,12 +215,12 @@ const Warranty: React.FC = () => {
               <h2 className="text-2xl font-bold">Gói Bảo Hành Mở Rộng</h2>
             </div>
             <Separator className="mb-6" />
-            
+
             <div className="space-y-6">
               <p className="text-neutral-600 dark:text-neutral-300">
                 Ngoài gói bảo hành tiêu chuẩn, TechStore còn cung cấp các gói bảo hành mở rộng giúp khách hàng an tâm hơn khi sử dụng sản phẩm:
               </p>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden">
                   <div className="bg-neutral-100 dark:bg-neutral-800 p-4">
@@ -259,7 +259,7 @@ const Warranty: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="border-2 border-primary rounded-lg overflow-hidden relative">
                   <div className="absolute top-0 right-0 bg-primary text-white text-xs px-2 py-1 rounded-bl-lg">
                     Phổ biến nhất
@@ -306,7 +306,7 @@ const Warranty: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden">
                   <div className="bg-neutral-100 dark:bg-neutral-800 p-4">
                     <h3 className="text-lg font-semibold text-center">Gói Bảo Vệ Premium</h3>
@@ -351,13 +351,13 @@ const Warranty: React.FC = () => {
                   </div>
                 </div>
               </div>
-              
+
               <p className="text-neutral-600 dark:text-neutral-300 text-sm mt-4">
                 <em>Lưu ý: Gói bảo hành mở rộng phải được mua trong vòng 30 ngày kể từ ngày mua sản phẩm. Giá gói bảo hành mở rộng có thể thay đổi tùy theo giá trị và loại sản phẩm.</em>
               </p>
             </div>
           </section>
-          
+
           {/* Contact */}
           <div className="mt-12 bg-primary/10 dark:bg-primary/5 rounded-lg p-8 text-center">
             <h2 className="text-xl font-semibold mb-4">Còn Thắc Mắc Về Bảo Hành?</h2>

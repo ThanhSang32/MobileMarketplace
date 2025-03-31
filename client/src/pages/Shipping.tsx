@@ -97,19 +97,19 @@ const Shipping: React.FC = () => {
             
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-semibold mb-3">Điều Kiện Đổi Trả</h3>
+                <h3 className="text-xl font-semibold mb-3">Return Conditions</h3>
                 <p className="text-neutral-600 dark:text-neutral-300 mb-4">
-                  TechStore cam kết đảm bảo sự hài lòng của khách hàng với các sản phẩm mua tại cửa hàng. Sản phẩm được chấp nhận đổi trả khi:
+                  TechStore is committed to ensuring customer satisfaction with products purchased from our store. Products are eligible for return when:
                 </p>
                 <ul className="list-disc pl-6 space-y-2 text-neutral-600 dark:text-neutral-300">
                   <li>
-                    Sản phẩm còn trong thời hạn đổi trả (7 ngày kể từ ngày nhận hàng)
+                    Product is within the return period (7 days from receipt)
                   </li>
                   <li>
-                    Sản phẩm còn nguyên vẹn, đầy đủ tem nhãn, hộp sản phẩm, phụ kiện đi kèm
+                    Product is intact, with all labels, packaging, and accessories included
                   </li>
                   <li>
-                    Sản phẩm không có dấu hiệu đã qua sử dụng, va đập, trầy xước, hư hỏng
+                    Product has no dấu hiệu đã qua sử dụng, va đập, trầy xước, hư hỏng
                   </li>
                   <li>
                     Có hóa đơn mua hàng hoặc phiếu giao hàng kèm theo

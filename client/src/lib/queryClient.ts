@@ -41,6 +41,8 @@ export async function apiRequest(
   if (newSessionId) {
     console.log(`Received sessionId: ${newSessionId}`);
     localStorage.setItem('sessionId', newSessionId);
+  } else {
+    console.error('Missing sessionId in response headers');
   }
   
   return res;

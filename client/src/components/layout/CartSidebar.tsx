@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { queryClient } from "@/lib/queryClient";
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -20,6 +21,14 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
       console.log("CartSidebar opened with cart:", cart);
     }
   }, [isOpen, cart]);
+  
+  // Force cart refresh when the sidebar opens
+  useEffect(() => {
+    if (isOpen) {
+      // Manually trigger a refresh of the cart data
+      queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

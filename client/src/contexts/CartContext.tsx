@@ -65,7 +65,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Fetch cart data
   const { data: cart = defaultCart, isLoading, refetch } = useQuery<Cart, Error, Cart>({
     queryKey: ["/api/cart"],
-    staleTime: 60000, // 1 minute
+    staleTime: 1000, // 1 second, refresh more frequently for testing
+    refetchOnWindowFocus: true,
   });
 
   // Cập nhật sessionId từ localStorage nếu có thay đổi

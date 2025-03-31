@@ -143,7 +143,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Updating existing cart item:", existingItem);
         cartItem = await storage.updateCartItemQuantity(
           existingItem.id, 
-          existingItem.quantity + result.data.quantity
+          existingItem.quantity + (result.data.quantity || 1)
         );
       } else {
         console.log("Adding new item to cart:", result.data);

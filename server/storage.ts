@@ -528,6 +528,74 @@ export class MemStorage implements IStorage {
       }
     ];
 
+    const wearables = [
+      {
+        name: "Apple Watch Series 7",
+        description: "Advanced smartwatch with health monitoring and cellular connectivity",
+        price: 399,
+        category: "wearables",
+        brand: "Apple",
+        image: "/images/apple-watch-7.jpg",
+        rating: 4.8,
+        reviews: 245,
+        discount: 0,
+        isNew: true,
+        stock: 75
+      },
+      {
+        name: "Samsung Galaxy Watch 5",
+        description: "Premium Android smartwatch with advanced fitness tracking",
+        price: 279,
+        category: "wearables",
+        brand: "Samsung",
+        image: "/images/galaxy-watch-5.jpg",
+        rating: 4.6,
+        reviews: 180,
+        discount: 10,
+        isNew: true,
+        stock: 60
+      },
+      {
+        name: "Fitbit Sense 2",
+        description: "Advanced health and fitness smartwatch with ECG",
+        price: 299,
+        category: "wearables",
+        brand: "Fitbit",
+        image: "/images/fitbit-sense-2.jpg",
+        rating: 4.5,
+        reviews: 156,
+        discount: 15,
+        isNew: false,
+        stock: 45
+      },
+      {
+        name: "Garmin Venu 2",
+        description: "GPS smartwatch with advanced health monitoring",
+        price: 349,
+        category: "wearables",
+        brand: "Garmin",
+        image: "/images/garmin-venu-2.jpg",
+        rating: 4.7,
+        reviews: 134,
+        discount: 0,
+        isNew: true,
+        stock: 40
+      },
+      {
+        name: "Xiaomi Mi Band 7",
+        description: "Affordable fitness tracker with AMOLED display",
+        price: 49,
+        category: "wearables",
+        brand: "Xiaomi",
+        image: "/images/mi-band-7.jpg",
+        rating: 4.4,
+        reviews: 320,
+        discount: 20,
+        isNew: false,
+        stock: 100
+      }
+    ];
+
     const accessories = [
       {
         name: "AirPods Pro",
@@ -637,7 +705,7 @@ export class MemStorage implements IStorage {
 
 
     // Add all products to the storage
-    [...phones, ...laptops, ...tablets, ...accessories].forEach(product => {
+    [...phones, ...laptops, ...tablets, ...wearables, ...accessories].forEach(product => {
       const id = this.productCurrentId++;
       this.products.set(id, { ...product, id });
     });

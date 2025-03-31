@@ -69,8 +69,9 @@ const Header: React.FC<HeaderProps> = ({
                 <Link href="/category/laptop?brand=Lenovo" className="block px-4 py-2 text-sm hover:bg-secondary dark:hover:bg-neutral-700 rounded-md">Lenovo</Link>
               </div>
             </div>
-            <Link href="/category/accessories" className="font-medium py-2 hover:text-primary dark:hover:text-primary transition-colors">Accessories</Link>
-            <Link href="/deals" className="font-medium py-2 hover:text-primary dark:hover:text-primary transition-colors">Deals</Link>
+            <Link href="/accessories" className="font-medium py-2 hover:text-primary dark:hover:text-primary transition-colors">Phụ Kiện</Link>
+            <Link href="/wearables" className="font-medium py-2 hover:text-primary dark:hover:text-primary transition-colors">Thiết Bị Đeo</Link>
+            <Link href="/refurbished" className="font-medium py-2 hover:text-primary dark:hover:text-primary transition-colors">Hàng Tân Trang</Link>
           </nav>
           
           {/* Right Actions */}

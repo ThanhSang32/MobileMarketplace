@@ -10,9 +10,10 @@ interface MobileNavProps {
 interface DropdownItemProps {
   title: string;
   links: { href: string; label: string }[];
+  onClose: () => void;
 }
 
-const DropdownItem: React.FC<DropdownItemProps> = ({ title, links }) => {
+const DropdownItem: React.FC<DropdownItemProps> = ({ title, links, onClose }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -74,22 +75,29 @@ const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
         <nav className="p-4">
-          <DropdownItem title="Phones" links={phoneLinks} />
-          <DropdownItem title="Laptops" links={laptopLinks} />
+          <DropdownItem title="Phones" links={phoneLinks} onClose={onClose} />
+          <DropdownItem title="Laptops" links={laptopLinks} onClose={onClose} />
           
           <Link 
-            href="/category/accessories" 
+            href="/accessories" 
             className="block font-medium py-2 mb-4 hover:text-primary dark:hover:text-primary transition-colors"
             onClick={onClose}
           >
-            Accessories
+            Phụ Kiện
           </Link>
           <Link 
-            href="/deals" 
+            href="/wearables" 
             className="block font-medium py-2 mb-4 hover:text-primary dark:hover:text-primary transition-colors"
             onClick={onClose}
           >
-            Deals
+            Thiết Bị Đeo
+          </Link>
+          <Link 
+            href="/refurbished" 
+            className="block font-medium py-2 mb-4 hover:text-primary dark:hover:text-primary transition-colors"
+            onClick={onClose}
+          >
+            Hàng Tân Trang
           </Link>
         </nav>
       </div>

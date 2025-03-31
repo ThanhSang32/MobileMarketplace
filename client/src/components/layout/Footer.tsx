@@ -50,18 +50,18 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/category/accessories" className="text-neutral-400 hover:text-white">
-                  Accessories
+                <Link href="/accessories" className="text-neutral-400 hover:text-white">
+                  Phụ Kiện
                 </Link>
               </li>
               <li>
-                <Link href="/category/wearables" className="text-neutral-400 hover:text-white">
-                  Wearables
+                <Link href="/wearables" className="text-neutral-400 hover:text-white">
+                  Thiết Bị Đeo
                 </Link>
               </li>
               <li>
-                <Link href="/category/refurbished" className="text-neutral-400 hover:text-white">
-                  Refurbished
+                <Link href="/refurbished" className="text-neutral-400 hover:text-white">
+                  Hàng Tân Trang
                 </Link>
               </li>
             </ul>

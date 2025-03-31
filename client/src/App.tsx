@@ -13,6 +13,9 @@ import FAQ from "@/pages/FAQ";
 import Shipping from "@/pages/Shipping";
 import Warranty from "@/pages/Warranty";
 import Repair from "@/pages/Repair";
+import Accessories from "@/pages/Accessories";
+import Wearables from "@/pages/Wearables";
+import Refurbished from "@/pages/Refurbished";
 
 function Router() {
   return (
@@ -26,6 +29,9 @@ function Router() {
       <Route path="/shipping" component={Shipping} />
       <Route path="/warranty" component={Warranty} />
       <Route path="/repair" component={Repair} />
+      <Route path="/accessories" component={Accessories} />
+      <Route path="/wearables" component={Wearables} />
+      <Route path="/refurbished" component={Refurbished} />
       <Route component={NotFound} />
     </Switch>
   );

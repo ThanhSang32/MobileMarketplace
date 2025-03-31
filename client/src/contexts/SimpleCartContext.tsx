@@ -50,7 +50,7 @@ const CartContext = createContext<CartContextType>({
   clearCart: () => {}
 });
 
-export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<Cart>(defaultCart);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -118,6 +118,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         items: newItems,
         ...totals,
         discount: 0
+
+export const useSimpleCart = () => useContext(CartContext);
+
       };
     });
   };

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
@@ -7,13 +8,13 @@ const PromoSection: React.FC = () => {
     <section className="py-12 bg-primary">
       <div className="container mx-auto px-4">
         <div className="text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">Summer Sale - Up to 30% Off</h2>
+          <h2 className="text-3xl font-bold mb-4">Khuyến mãi mùa hè - Giảm đến 30%</h2>
           <p className="text-lg max-w-2xl mx-auto mb-8">
-            Take advantage of amazing deals on our top products. Limited time offer, don't miss out!
+            Cơ hội sở hữu những sản phẩm công nghệ với giá ưu đãi. Chương trình có hạn, nhanh tay đặt hàng!
           </p>
-          <Link href="/deals">
+          <Link href="/shop">
             <Button className="inline-block px-6 py-3 bg-white text-primary font-medium rounded-md hover:bg-neutral-100 transition-colors">
-              Shop Now
+              Xem ngay
             </Button>
           </Link>
         </div>

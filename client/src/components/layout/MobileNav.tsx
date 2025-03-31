@@ -112,21 +112,21 @@ const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
             className="block font-medium py-2 mb-4 hover:text-primary dark:hover:text-primary transition-colors"
             onClick={onClose}
           >
-            Phụ Kiện
+            Accessories
           </Link>
           <Link 
             href="/wearables" 
             className="block font-medium py-2 mb-4 hover:text-primary dark:hover:text-primary transition-colors"
             onClick={onClose}
           >
-            Thiết Bị Đeo
+            Wearables
           </Link>
           <Link 
             href="/refurbished" 
             className="block font-medium py-2 mb-4 hover:text-primary dark:hover:text-primary transition-colors"
             onClick={onClose}
           >
-            Hàng Tân Trang
+            Refurbished
           </Link>
           
           <div className="mt-6 pt-6 border-t dark:border-neutral-800">
@@ -138,14 +138,14 @@ const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
                   onClick={onClose}
                 >
                   <User className="h-5 w-5 mr-2" />
-                  Tài khoản
+                  Account
                 </Link>
                 <button
                   onClick={handleLogout}
                   className="flex items-center w-full text-left font-medium py-2 mb-4 hover:text-primary dark:hover:text-primary transition-colors"
                 >
                   <LogOut className="h-5 w-5 mr-2" />
-                  Đăng xuất
+                  Logout
                 </button>
               </>
             ) : (
@@ -156,7 +156,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
                   onClick={onClose}
                 >
                   <User className="h-5 w-5 mr-2" />
-                  Đăng nhập
+                  Login
                 </Link>
               </>
             )}

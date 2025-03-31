@@ -187,7 +187,7 @@ const Accessories: React.FC = () => {
 
         {/* Info section */}
         <div className="mt-16 bg-neutral-50 dark:bg-neutral-800 rounded-lg p-8">
-          <h2 className="text-2xl font-bold mb-6">Why Choose TechStore Accessories?</h2>
+          <h2 className="text-2xl font-bold mb-6">Why Choose SangStore Accessories?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <div className="bg-primary/10 rounded-full h-12 w-12 flex items-center justify-center mb-4">
@@ -197,7 +197,7 @@ const Accessories: React.FC = () => {
               </div>
               <h3 className="text-lg font-semibold mb-2">100% Authentic Products</h3>
               <p className="text-neutral-600 dark:text-neutral-300">
-                All accessories at TechStore are authentic, with complete labels and warranties according to manufacturer standards.
+                All accessories at SangStore are authentic, with complete labels and warranties according to manufacturer standards.
               </p>
             </div>
 
@@ -221,7 +221,7 @@ const Accessories: React.FC = () => {
               </div>
               <h3 className="text-lg font-semibold mb-2">Perfect Compatibility</h3>
               <p className="text-neutral-600 dark:text-neutral-300">
-                TechStore accessories are rigorously tested to ensure optimal compatibility with your devices.
+                SangStore accessories are rigorously tested to ensure optimal compatibility with your devices.
               </p>
             </div>
           </div>

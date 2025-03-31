@@ -19,10 +19,10 @@ const Warranty: React.FC = () => {
 
             <div className="bg-neutral-50 dark:bg-neutral-800 p-6 rounded-lg mb-8">
               <p className="text-neutral-600 dark:text-neutral-300 mb-4">
-                TechStore cam kết mang đến cho khách hàng sự an tâm khi mua sắm với chính sách bảo hành toàn diện. Chúng tôi cung cấp dịch vụ bảo hành chính hãng cho tất cả sản phẩm, đảm bảo khách hàng không phải lo lắng khi sản phẩm gặp sự cố.
+                SangStore cam kết mang đến cho khách hàng sự an tâm khi mua sắm với chính sách bảo hành toàn diện. Chúng tôi cung cấp dịch vụ bảo hành chính hãng cho tất cả sản phẩm, đảm bảo khách hàng không phải lo lắng khi sản phẩm gặp sự cố.
               </p>
 
-              <h3 className="text-lg font-semibold mb-2">Cam Kết Của TechStore:</h3>
+              <h3 className="text-lg font-semibold mb-2">Cam Kết Của SangStore:</h3>
               <ul className="list-disc pl-6 space-y-2 text-neutral-600 dark:text-neutral-300">
                 <li>Bảo hành chính hãng theo tiêu chuẩn của nhà sản xuất</li>
                 <li>Quy trình bảo hành nhanh chóng, minh bạch</li>

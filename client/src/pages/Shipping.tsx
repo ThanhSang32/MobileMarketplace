@@ -127,7 +127,7 @@ const Shipping: React.FC = () => {
                 </p>
                 <ol className="list-decimal pl-6 space-y-2 text-neutral-600 dark:text-neutral-300">
                   <li>
-                    Liên hệ bộ phận CSKH của TechStore qua số hotline 1800-123-456 hoặc email support@techstore.com để thông báo về việc đổi/trả
+                    Liên hệ bộ phận CSKH của SangStore qua số hotline 0337170559 hoặc email support@sangstore.com để thông báo về việc đổi/trả
                   </li>
                   <li>
                     Cung cấp thông tin đơn hàng, lý do đổi/trả và hình ảnh sản phẩm (nếu cần)

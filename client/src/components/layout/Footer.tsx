@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           <div>
-            <h3 className="text-lg font-semibold mb-4">TechStore</h3>
+            <h3 className="text-lg font-semibold mb-4">SangStore</h3>
             <p className="text-neutral-400 mb-4">
               Your trusted store for the latest technology products at competitive prices.
             </p>
@@ -103,15 +103,15 @@ const Footer: React.FC = () => {
             <ul className="space-y-3 text-neutral-400">
               <li className="flex items-start">
                 <MapPin className="h-5 w-5 mt-1 mr-3 flex-shrink-0" />
-                <span>123 Tech Street, Digital City, 10011</span>
+                <span>Võ Thành Long, Phú Cường, TDM, DB</span>
               </li>
               <li className="flex items-center">
                 <Phone className="h-5 w-5 mr-3 flex-shrink-0" />
-                <span>+1 (555) 123-4567</span>
+                <span>0337170559</span>
               </li>
               <li className="flex items-center">
                 <Mail className="h-5 w-5 mr-3 flex-shrink-0" />
-                <span>support@techstore.com</span>
+                <span>support@sangstore.com</span>
               </li>
             </ul>
           </div>

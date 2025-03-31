@@ -289,7 +289,7 @@ const Repair: React.FC = () => {
             
             <div className="space-y-8">
               <p className="text-neutral-600 dark:text-neutral-300">
-                Tại TechStore, chúng tôi áp dụng quy trình sửa chữa chuyên nghiệp, minh bạch để đảm bảo chất lượng dịch vụ tốt nhất:
+                Tại SangStore, chúng tôi áp dụng quy trình sửa chữa chuyên nghiệp, minh bạch để đảm bảo chất lượng dịch vụ tốt nhất:
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-5 gap-4">

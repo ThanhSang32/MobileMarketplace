@@ -1,6 +1,18 @@
 
 # BÁO CÁO ĐỒ ÁN SANGSTORE
 
+## ABSTRACT
+
+This project presents the development of SangStore, a modern e-commerce platform specializing in technology products. The system is built using React and TypeScript for the frontend, with Express.js and Node.js powering the backend infrastructure. The platform implements essential e-commerce functionalities including product browsing, shopping cart management, user authentication, and secure payment processing through Stripe integration. By leveraging contemporary web technologies and following best practices in software development, SangStore delivers a responsive, user-friendly shopping experience while maintaining robust security measures and efficient data management.
+
+## ACKNOWLEDGEMENT
+
+I would like to express my sincere gratitude to my project supervisor for their invaluable guidance and support throughout the development of this e-commerce platform. Their expertise and constructive feedback have significantly contributed to the success of this project.
+
+I am also grateful to the faculty members of the Computer Science department for providing the necessary resources and knowledge that formed the foundation of this work. Special thanks to my fellow students for their collaborative spirit and technical discussions that helped refine various aspects of the project.
+
+Additionally, I would like to acknowledge the open-source community for their contributions to the various libraries and frameworks used in this project, which made the development process more efficient and effective.
+
 ## 1. GIỚI THIỆU
 
 ### 1.1 Tổng quan

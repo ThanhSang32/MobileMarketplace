@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+
+import React, { createContext, useContext, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
 
@@ -47,21 +48,10 @@ const CartContext = createContext<CartContextType>({
 
 export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<Cart>(defaultCart);
-  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-
-  const fetchCart = useCallback(async () => {
-    try {
-      const response = await api.get('/api/cart');
-      setCart(response);
-    } catch (error) {
-      console.error('Error fetching cart:', error);
-    }
-  }, []);
 
   const addToCart = async (productId: number, quantity: number = 1) => {
     try {
-      setIsLoading(true);
       const response = await api.post('/api/cart', { productId, quantity });
       setCart(response);
       toast({
@@ -75,14 +65,11 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         description: "Không thể thêm sản phẩm vào giỏ hàng",
         variant: "destructive"
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const removeFromCart = async (itemId: number) => {
     try {
-      setIsLoading(true);
       const response = await api.delete(`/api/cart/${itemId}`);
       setCart(response);
       toast({
@@ -96,14 +83,11 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         description: "Không thể xóa sản phẩm khỏi giỏ hàng",
         variant: "destructive"
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const updateQuantity = async (itemId: number, quantity: number) => {
     try {
-      setIsLoading(true);
       const response = await api.put(`/api/cart/${itemId}`, { quantity });
       setCart(response);
     } catch (error) {
@@ -113,14 +97,11 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         description: "Không thể cập nhật số lượng",
         variant: "destructive"
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const clearCart = async () => {
     try {
-      setIsLoading(true);
       const response = await api.delete('/api/cart');
       setCart(response);
       toast({
@@ -134,8 +115,6 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         description: "Không thể xóa giỏ hàng",
         variant: "destructive"
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -154,4 +133,10 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   );
 };
 
-export const useSimpleCart = () => useContext(CartContext);
+export const useSimpleCart = () => {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error('useSimpleCart must be used within a SimpleCartProvider');
+  }
+  return context;
+};

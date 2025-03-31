@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Product } from '@shared/schema';
+import ProductCard from '@/components/products/ProductCard';
 
 const Wearables: React.FC = () => {
   const [selectedBrand, setSelectedBrand] = useState('all');

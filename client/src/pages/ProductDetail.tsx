@@ -27,8 +27,13 @@ const ProductDetail: React.FC = () => {
   
   const handleAddToCart = async () => {
     if (product) {
-      await addToCart(product.id, quantity);
-      // Hiển thị thông báo thành công (đã được xử lý trong CartContext)
+      console.log("ProductDetail: handleAddToCart clicked", { productId: product.id, quantity });
+      try {
+        await addToCart(product.id, quantity);
+        console.log("ProductDetail: Item added to cart successfully");
+      } catch (error) {
+        console.error("ProductDetail: Error adding to cart", error);
+      }
     }
   };
   

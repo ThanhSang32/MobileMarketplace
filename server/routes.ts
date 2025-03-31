@@ -17,6 +17,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Trả về sessionId trong header cho client lưu trữ
     res.setHeader('X-Session-ID', sessionId);
     
+    // Log thông tin debug
+    console.log(`Request ${req.method} ${req.url}`, {
+      reqSessionId: req.headers['x-session-id'] || req.headers.sessionid,
+      newSessionId: sessionId
+    });
+    
     next();
   });
 
@@ -108,6 +114,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const sessionId = (req as any).sessionId;
       
+      console.log("POST /api/cart - Adding item with sessionId:", sessionId);
+      console.log("Request body:", req.body);
+      
       // Validate request body
       const result = insertCartItemSchema.safeParse({
         ...req.body,
@@ -115,20 +124,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       if (!result.success) {
+        console.error("Invalid cart item data:", result.error.format());
         return res.status(400).json({ message: "Invalid cart item data", errors: result.error.format() });
       }
       
       // Check if product exists
       const product = await storage.getProductById(result.data.productId);
       if (!product) {
+        console.error("Product not found:", result.data.productId);
         return res.status(404).json({ message: "Product not found" });
       }
       
-      // Add item to cart
-      const cartItem = await storage.addToCart(result.data);
+      // Check if item already exists in cart
+      const existingItem = await storage.getCartItemByProductId(sessionId, result.data.productId);
+      let cartItem;
+      
+      if (existingItem) {
+        console.log("Updating existing cart item:", existingItem);
+        cartItem = await storage.updateCartItemQuantity(
+          existingItem.id, 
+          existingItem.quantity + result.data.quantity
+        );
+      } else {
+        console.log("Adding new item to cart:", result.data);
+        cartItem = await storage.addToCart(result.data);
+      }
       
       // Return full cart
       const cartItems = await storage.getCartItems(sessionId);
+      console.log("Cart after add:", cartItems);
+      
       const subtotal = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
       const discount = cartItems.reduce((sum, item) => {
         const itemDiscount = item.product.discount ? (item.product.price * item.quantity * item.product.discount / 100) : 0;
@@ -136,13 +161,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }, 0);
       const total = subtotal - discount;
       
-      res.status(201).json({
+      const response = {
         items: cartItems,
         subtotal,
         discount,
         total,
         itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0)
-      });
+      };
+      
+      console.log("Sending response:", response);
+      res.status(201).json(response);
     } catch (error) {
       console.error("Error adding to cart:", error);
       res.status(500).json({ message: "Failed to add item to cart" });

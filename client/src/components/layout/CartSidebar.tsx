@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Plus, Minus, Trash, ArrowRight } from "@/components/ui/icons";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,12 @@ interface CartSidebarProps {
 const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
   const { cart, updateQuantity, removeItem, clearCart, isLoading } = useCart();
   const [isUpdating, setIsUpdating] = useState(false);
+  
+  useEffect(() => {
+    if (isOpen) {
+      console.log("CartSidebar opened with cart:", cart);
+    }
+  }, [isOpen, cart]);
 
   if (!isOpen) return null;
 

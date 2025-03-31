@@ -593,6 +593,48 @@ export class MemStorage implements IStorage {
         discount: 20,
         isNew: false,
         stock: 100
+      },
+      {
+        id: 10,
+        name: "Smartwatch Pro X",
+        description: "Advanced smartwatch with health tracking and notifications",
+        price: 299.99,
+        category: "wearables",
+        brand: "TechWear",
+        image: "images/smartwatch-pro.jpg",
+        rating: 4.5,
+        reviews: 128,
+        discount: 10,
+        isNew: true,
+        stock: 45
+      },
+      {
+        id: 11,
+        name: "Fitness Band Ultra",
+        description: "Lightweight fitness tracker with heart rate monitoring",
+        price: 89.99,
+        category: "wearables",
+        brand: "FitTech",
+        image: "images/fitness-band.jpg",
+        rating: 4.3,
+        reviews: 95,
+        discount: 0,
+        isNew: true,
+        stock: 60
+      },
+      {
+        id: 12,
+        name: "Smart Ring Plus",
+        description: "Smart ring with gesture controls and health tracking",
+        price: 199.99,
+        category: "wearables",
+        brand: "TechWear",
+        image: "images/smart-ring.jpg",
+        rating: 4.0,
+        reviews: 45,
+        discount: 5,
+        isNew: false,
+        stock: 30
       }
     ];
 
@@ -700,6 +742,48 @@ export class MemStorage implements IStorage {
         discount: 15,
         isNew: false,
         stock: 90
+      },
+      {
+        id: 20,
+        name: "Premium Headphones",
+        description: "High-quality wireless headphones with noise cancellation",
+        price: 249.99,
+        category: "accessories",
+        brand: "AudioTech",
+        image: "images/headphones.jpg",
+        rating: 4.7,
+        reviews: 156,
+        discount: 15,
+        isNew: true,
+        stock: 35
+      },
+      {
+        id: 21,
+        name: "Wireless Power Bank",
+        description: "20000mAh power bank with wireless charging capability",
+        price: 79.99,
+        category: "accessories",
+        brand: "PowerTech",
+        image: "images/powerbank.jpg",
+        rating: 4.6,
+        reviews: 89,
+        discount: 0,
+        isNew: true,
+        stock: 50
+      },
+      {
+        id: 22,
+        name: "Premium Phone Case",
+        description: "Durable protection case with card holder",
+        price: 39.99,
+        category: "accessories",
+        brand: "CasePro",
+        image: "images/phone-case.jpg",
+        rating: 4.4,
+        reviews: 112,
+        discount: 10,
+        isNew: false,
+        stock: 75
       }
     ];
 

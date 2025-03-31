@@ -1,7 +1,7 @@
-import React, { createContext, useContext } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useToast } from '@/hooks/use-toast';
+
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { api } from '@/lib/api';
+import { useToast } from '@/hooks/use-toast';
 import { Product } from '@shared/schema';
 
 interface CartItem {
@@ -20,7 +20,7 @@ interface Cart {
 }
 
 interface CartContextType {
-  cart: Cart | undefined;
+  cart: Cart;
   isLoading: boolean;
   addToCart: (productId: number, quantity?: number) => Promise<void>;
   removeFromCart: (itemId: number) => Promise<void>;
@@ -28,93 +28,123 @@ interface CartContextType {
   clearCart: () => Promise<void>;
 }
 
-const CartContext = createContext<CartContextType | null>(null);
+const defaultCart: Cart = {
+  items: [],
+  subtotal: 0,
+  discount: 0,
+  total: 0,
+  itemCount: 0
+};
+
+const CartContext = createContext<CartContextType>({
+  cart: defaultCart,
+  isLoading: false,
+  addToCart: async () => {},
+  removeFromCart: async () => {},
+  updateQuantity: async () => {},
+  clearCart: async () => {}
+});
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const queryClient = useQueryClient();
+  const [cart, setCart] = useState<Cart>(defaultCart);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const { data: cart, isLoading } = useQuery<Cart>({
-    queryKey: ['cart'],
-    queryFn: () => api.get('/api/cart'),
-  });
+  const fetchCart = async () => {
+    try {
+      const response = await api.get('/api/cart');
+      setCart(response);
+    } catch (error) {
+      console.error('Error fetching cart:', error);
+    }
+  };
 
-  const addToCartMutation = useMutation({
-    mutationFn: (variables: { productId: number; quantity: number }) =>
-      api.post('/api/cart', variables),
-    onSuccess: (newCart) => {
-      queryClient.setQueryData(['cart'], newCart);
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+  const addToCart = async (productId: number, quantity: number = 1) => {
+    setIsLoading(true);
+    try {
+      const response = await api.post('/api/cart', { productId, quantity });
+      setCart(response);
       toast({
         title: "Thành công",
-        description: "Đã thêm sản phẩm vào giỏ hàng",
+        description: `Đã thêm ${quantity} sản phẩm vào giỏ hàng`,
       });
-    },
-    onError: () => {
+    } catch (error) {
+      console.error('Error adding to cart:', error);
       toast({
         title: "Lỗi",
         description: "Không thể thêm sản phẩm vào giỏ hàng",
-        variant: "destructive",
+        variant: "destructive"
       });
-    },
-  });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const removeFromCartMutation = useMutation({
-    mutationFn: (itemId: number) => api.delete(`/api/cart/${itemId}`),
-    onSuccess: (newCart) => {
-      queryClient.setQueryData(['cart'], newCart);
+  const removeFromCart = async (itemId: number) => {
+    setIsLoading(true);
+    try {
+      const response = await api.delete(`/api/cart/${itemId}`);
+      setCart(response);
       toast({
         title: "Thành công",
         description: "Đã xóa sản phẩm khỏi giỏ hàng",
       });
-    },
-  });
+    } catch (error) {
+      console.error('Error removing from cart:', error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể xóa sản phẩm khỏi giỏ hàng",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const updateQuantityMutation = useMutation({
-    mutationFn: (variables: { itemId: number; quantity: number }) =>
-      api.put(`/api/cart/${variables.itemId}`, { quantity: variables.quantity }),
-    onSuccess: (newCart) => {
-      queryClient.setQueryData(['cart'], newCart);
-    },
-  });
+  const updateQuantity = async (itemId: number, quantity: number) => {
+    setIsLoading(true);
+    try {
+      const response = await api.put(`/api/cart/${itemId}`, { quantity });
+      setCart(response);
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể cập nhật số lượng",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const clearCartMutation = useMutation({
-    mutationFn: () => api.delete('/api/cart'),
-    onSuccess: (newCart) => {
-      queryClient.setQueryData(['cart'], newCart);
+  const clearCart = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.delete('/api/cart');
+      setCart(response);
       toast({
         title: "Thành công",
         description: "Đã xóa toàn bộ giỏ hàng",
       });
-    },
-  });
-
-  const addToCart = async (productId: number, quantity: number = 1) => {
-    await addToCartMutation.mutateAsync({ productId, quantity });
-  };
-
-  const removeFromCart = async (itemId: number) => {
-    await removeFromCartMutation.mutateAsync(itemId);
-  };
-
-  const updateQuantity = async (itemId: number, quantity: number) => {
-    await updateQuantityMutation.mutateAsync({ itemId, quantity });
-  };
-
-  const clearCart = async () => {
-    await clearCartMutation.mutateAsync();
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể xóa giỏ hàng",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <CartContext.Provider
-      value={{
-        cart,
-        isLoading: isLoading || addToCartMutation.isPending || removeFromCartMutation.isPending || updateQuantityMutation.isPending || clearCartMutation.isPending,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
-        clearCart,
-      }}
-    >
+    <CartContext.Provider value={{ cart, isLoading, addToCart, removeFromCart, updateQuantity, clearCart }}>
       {children}
     </CartContext.Provider>
   );

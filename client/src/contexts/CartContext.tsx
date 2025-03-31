@@ -8,6 +8,13 @@ import { useToast } from "@/hooks/use-toast";
 // Debug flag to log cart operations
 const DEBUG = true;
 
+// Force reset cart if needed - for debugging only
+const RESET_CART = true;
+if (RESET_CART && typeof window !== 'undefined') {
+  console.log("RESETTING CART FOR DEBUGGING PURPOSES");
+  localStorage.removeItem("localCart");
+}
+
 // Tạo ID ngẫu nhiên cho các item trong giỏ hàng
 const generateId = () => Math.floor(Math.random() * 1000000);
 

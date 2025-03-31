@@ -88,54 +88,36 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   }, [cart]);
 
   // Add an item to the cart
-  const addToCart = (productId: number, product: Product, quantity: number = 1) => {
+  const addToCart = async (productId: number, product: Product, quantity: number = 1) => {
     setIsLoading(true);
     try {
-      setCart(prevCart => {
-        // Check if the item already exists in the cart
-        const existingItemIndex = prevCart.items.findIndex(item => item.productId === productId);
-        
-        let newItems;
-        if (existingItemIndex >= 0) {
-          // Update quantity if item exists
-          newItems = [...prevCart.items];
-          newItems[existingItemIndex].quantity += quantity;
-        } else {
-          // Add new item
-          newItems = [
-            ...prevCart.items,
-            {
-              id: Date.now(), // Use timestamp as a unique ID
-              productId,
-              quantity,
-              product
-            }
-          ];
-        }
-        
-        // Calculate new totals
-        const { subtotal, itemCount, total } = calculateCartTotals(newItems);
-        
-        // Return updated cart
-        return {
-          items: newItems,
-          subtotal,
-          discount: 0,
-          total,
-          itemCount
-        };
+      const response = await fetch('/api/cart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Session-ID': localStorage.getItem('cartSessionId') || ''
+        },
+        body: JSON.stringify({ productId, quantity }),
       });
-      
-      // Show success message
-      toast({
-        title: "Added to cart",
-        description: "Product has been added to your cart"
-      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add item to cart');
+      }
+
+      const data = await response.json();
+      console.log('Cart response:', data);
+      setCart(data);
+
+      // Store session ID if received
+      const sessionId = response.headers.get('X-Session-ID');
+      if (sessionId) {
+        localStorage.setItem('cartSessionId', sessionId);
+      }
     } catch (error) {
-      console.error("Error adding to cart:", error);
+      console.error('Error adding to cart:', error);
       toast({
         title: "Error",
-        description: "Failed to add product to cart",
+        description: "Failed to add item to cart",
         variant: "destructive"
       });
     } finally {
@@ -153,14 +135,14 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         if (itemIndex === -1) {
           throw new Error("Item not found");
         }
-        
+
         // Create new items array with updated quantity
         const newItems = [...prevCart.items];
         newItems[itemIndex].quantity = quantity;
-        
+
         // Calculate new totals
         const { subtotal, itemCount, total } = calculateCartTotals(newItems);
-        
+
         // Return updated cart
         return {
           items: newItems,
@@ -189,10 +171,10 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       setCart(prevCart => {
         // Filter out the item
         const newItems = prevCart.items.filter(item => item.id !== itemId);
-        
+
         // Calculate new totals
         const { subtotal, itemCount, total } = calculateCartTotals(newItems);
-        
+
         // Return updated cart
         return {
           items: newItems,
@@ -202,7 +184,7 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           itemCount
         };
       });
-      
+
       // Show success message
       toast({
         title: "Removed from cart",
@@ -225,7 +207,7 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setIsLoading(true);
     try {
       setCart(defaultCart);
-      
+
       // Show success message
       toast({
         title: "Cart cleared",

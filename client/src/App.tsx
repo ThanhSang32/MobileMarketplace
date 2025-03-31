@@ -20,6 +20,7 @@ import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import Account from "@/pages/Account";
 import Shop from "@/pages/Shop";
+import CompareProducts from "@/pages/CompareProducts";
 
 function Router() {
   return (
@@ -37,6 +38,7 @@ function Router() {
       <Route path="/wearables" component={Wearables} />
       <Route path="/refurbished" component={Refurbished} />
       <Route path="/shop" component={Shop} />
+      <Route path="/compare" component={CompareProducts} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/account" component={Account} />

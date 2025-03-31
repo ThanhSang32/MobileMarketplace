@@ -18,27 +18,21 @@ interface Cart {
   itemCount: number;
 }
 
-interface CartContextType {
-  cart: Cart;
-  isLoading: boolean;
-  addToCart: (productId: number, product: Product, quantity?: number) => void;
-  updateQuantity: (itemId: number, quantity: number) => void;
-  removeItem: (itemId: number) => void;
-  clearCart: () => void;
-}
-
-const calculateCartTotals = (items: CartItem[]) => {
-  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-  return { subtotal, itemCount, total: subtotal };
-};
-
 const defaultCart: Cart = {
   items: [],
   subtotal: 0,
   discount: 0,
   total: 0,
   itemCount: 0
+};
+
+type CartContextType = {
+  cart: Cart;
+  isLoading: boolean;
+  addToCart: (productId: number, product: Product, quantity?: number) => void;
+  updateQuantity: (itemId: number, quantity: number) => void;
+  removeItem: (itemId: number) => void;
+  clearCart: () => void;
 };
 
 const CartContext = createContext<CartContextType>({
@@ -50,12 +44,13 @@ const CartContext = createContext<CartContextType>({
   clearCart: () => {}
 });
 
+export const useSimpleCart = () => useContext(CartContext);
+
 export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<Cart>(defaultCart);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  // Load cart from localStorage
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
@@ -63,108 +58,96 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   }, []);
 
-  // Save cart to localStorage
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
 
+  const calculateTotals = (items: CartItem[]) => {
+    const subtotal = items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+    return {
+      subtotal,
+      total: subtotal - (cart.discount || 0),
+      itemCount: items.reduce((count, item) => count + item.quantity, 0)
+    };
+  };
+
   const addToCart = (productId: number, product: Product, quantity: number = 1) => {
-    setCart(prevCart => {
-      const existingItem = prevCart.items.find(item => item.productId === productId);
-      
+    setCart(currentCart => {
+      const existingItem = currentCart.items.find(item => item.productId === productId);
       let newItems;
+
       if (existingItem) {
-        newItems = prevCart.items.map(item =>
+        newItems = currentCart.items.map(item =>
           item.productId === productId
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       } else {
-        newItems = [
-          ...prevCart.items,
-          {
-            id: Date.now(),
-            productId,
-            quantity,
-            product
-          }
-        ];
+        newItems = [...currentCart.items, {
+          id: Date.now(),
+          productId,
+          product,
+          quantity
+        }];
       }
-      
-      const totals = calculateCartTotals(newItems);
-      
-      toast({
-        title: "Thêm vào giỏ hàng thành công",
-        description: `Đã thêm ${product.name} vào giỏ hàng`
-      });
-      
+
+      const totals = calculateTotals(newItems);
+
       return {
         items: newItems,
         ...totals,
-        discount: 0
+        discount: currentCart.discount
       };
+    });
+
+    toast({
+      title: "Thêm vào giỏ hàng thành công",
+      description: `Đã thêm ${quantity} sản phẩm vào giỏ hàng`
     });
   };
 
   const updateQuantity = (itemId: number, quantity: number) => {
-    setCart(prevCart => {
-      const newItems = prevCart.items.map(item =>
+    setCart(currentCart => {
+      const newItems = currentCart.items.map(item =>
         item.id === itemId ? { ...item, quantity } : item
       );
-      
-      const totals = calculateCartTotals(newItems);
-      
+      const totals = calculateTotals(newItems);
+
       return {
         items: newItems,
         ...totals,
-        discount: 0
-
-export const useSimpleCart = () => useContext(CartContext);
-
+        discount: currentCart.discount
       };
     });
   };
 
   const removeItem = (itemId: number) => {
-    setCart(prevCart => {
-      const newItems = prevCart.items.filter(item => item.id !== itemId);
-      const totals = calculateCartTotals(newItems);
-      
-      toast({
-        title: "Đã xóa sản phẩm",
-        description: "Sản phẩm đã được xóa khỏi giỏ hàng"
-      });
-      
+    setCart(currentCart => {
+      const newItems = currentCart.items.filter(item => item.id !== itemId);
+      const totals = calculateTotals(newItems);
+
       return {
         items: newItems,
         ...totals,
-        discount: 0
+        discount: currentCart.discount
       };
     });
   };
 
   const clearCart = () => {
     setCart(defaultCart);
-    toast({
-      title: "Đã xóa giỏ hàng",
-      description: "Giỏ hàng đã được xóa"
-    });
   };
 
   return (
-    <CartContext.Provider
-      value={{
-        cart,
-        isLoading,
-        addToCart,
-        updateQuantity,
-        removeItem,
-        clearCart
-      }}
-    >
+    <CartContext.Provider value={{
+      cart,
+      isLoading,
+      addToCart,
+      updateQuantity,
+      removeItem,
+      clearCart
+    }}>
       {children}
     </CartContext.Provider>
   );
 };
-
-export const useCart = () => useContext(CartContext);

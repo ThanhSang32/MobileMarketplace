@@ -14,8 +14,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 
 // Form validation schema
 const loginSchema = z.object({
-  username: z.string().min(1, { message: 'Vui lòng nhập tên đăng nhập' }),
-  password: z.string().min(1, { message: 'Vui lòng nhập mật khẩu' })
+  username: z.string().min(1, { message: 'Please enter your username' }),
+  password: z.string().min(1, { message: 'Please enter your password' })
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -40,21 +40,21 @@ const Login = () => {
       const response = await apiRequest('POST', '/api/auth/login', data);
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Đăng nhập thất bại');
+        throw new Error(errorData.message || 'Login failed');
       }
       return response.json();
     },
     onSuccess: () => {
       toast({
-        title: 'Đăng nhập thành công',
-        description: 'Chào mừng bạn quay trở lại'
+        title: 'Login successful',
+        description: 'Welcome back'
       });
       navigate('/');
     },
     onError: (error: Error) => {
       setError(error.message);
       toast({
-        title: 'Đăng nhập thất bại',
+        title: 'Login failed',
         description: error.message,
         variant: 'destructive'
       });
@@ -71,9 +71,9 @@ const Login = () => {
     <div className="container py-10 max-w-md">
       <Card>
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Đăng nhập</CardTitle>
+          <CardTitle className="text-2xl font-bold">Login</CardTitle>
           <CardDescription>
-            Nhập thông tin đăng nhập của bạn
+            Enter your login information
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -90,9 +90,9 @@ const Login = () => {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tên đăng nhập</FormLabel>
+                    <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="tên_đăng_nhập" {...field} />
+                      <Input placeholder="username" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -104,7 +104,7 @@ const Login = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Mật khẩu</FormLabel>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input type="password" placeholder="******" {...field} />
                     </FormControl>
@@ -114,21 +114,21 @@ const Login = () => {
               />
               
               <Button type="submit" className="w-full" disabled={mutation.isPending}>
-                {mutation.isPending ? 'Đang đăng nhập...' : 'Đăng nhập'}
+                {mutation.isPending ? 'Logging in...' : 'Login'}
               </Button>
             </form>
           </Form>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <div className="text-sm text-muted-foreground text-center">
-            Chưa có tài khoản?{' '}
+            Don't have an account?{' '}
             <Button variant="link" className="p-0" onClick={() => navigate('/register')}>
-              Đăng ký
+              Register
             </Button>
           </div>
           <div className="text-sm text-muted-foreground text-center">
             <Button variant="link" className="p-0" onClick={() => navigate('/forgot-password')}>
-              Quên mật khẩu?
+              Forgot password?
             </Button>
           </div>
         </CardFooter>

@@ -14,14 +14,14 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 
 // Form validation schema
 const registerSchema = z.object({
-  username: z.string().min(3, { message: 'Tên đăng nhập phải có ít nhất 3 ký tự' }),
-  email: z.string().email({ message: 'Email không hợp lệ' }),
-  password: z.string().min(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự' }),
-  confirmPassword: z.string().min(1, { message: 'Vui lòng xác nhận mật khẩu' }),
+  username: z.string().min(3, { message: 'Username must be at least 3 characters' }),
+  email: z.string().email({ message: 'Invalid email address' }),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+  confirmPassword: z.string().min(1, { message: 'Please confirm your password' }),
   fullName: z.string().optional(),
   phone: z.string().optional()
 }).refine(data => data.password === data.confirmPassword, {
-  message: "Mật khẩu xác nhận không khớp",
+  message: "Passwords don't match",
   path: ["confirmPassword"],
 });
 
@@ -51,21 +51,21 @@ const Register = () => {
       const response = await apiRequest('POST', '/api/auth/register', data);
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Đăng ký thất bại');
+        throw new Error(errorData.message || 'Registration failed');
       }
       return response.json();
     },
     onSuccess: () => {
       toast({
-        title: 'Đăng ký thành công',
-        description: 'Vui lòng đăng nhập với tài khoản mới của bạn.'
+        title: 'Registration successful',
+        description: 'Please login with your new account.'
       });
       navigate('/login');
     },
     onError: (error: Error) => {
       setError(error.message);
       toast({
-        title: 'Đăng ký thất bại',
+        title: 'Registration failed',
         description: error.message,
         variant: 'destructive'
       });
@@ -83,9 +83,9 @@ const Register = () => {
     <div className="container py-10 max-w-md">
       <Card>
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Đăng ký tài khoản</CardTitle>
+          <CardTitle className="text-2xl font-bold">Register</CardTitle>
           <CardDescription>
-            Nhập thông tin của bạn để tạo tài khoản mới
+            Enter your information to create a new account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -102,9 +102,9 @@ const Register = () => {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tên đăng nhập</FormLabel>
+                    <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="tên_đăng_nhập" {...field} />
+                      <Input placeholder="username" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -130,9 +130,9 @@ const Register = () => {
                 name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Họ và tên (Tùy chọn)</FormLabel>
+                    <FormLabel>Full Name (Optional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Nguyễn Văn A" {...field} />
+                      <Input placeholder="John Doe" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -144,9 +144,9 @@ const Register = () => {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Số điện thoại (Tùy chọn)</FormLabel>
+                    <FormLabel>Phone Number (Optional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="0912345678" {...field} />
+                      <Input placeholder="123-456-7890" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -158,7 +158,7 @@ const Register = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Mật khẩu</FormLabel>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input type="password" placeholder="******" {...field} />
                     </FormControl>
@@ -172,7 +172,7 @@ const Register = () => {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Xác nhận mật khẩu</FormLabel>
+                    <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
                       <Input type="password" placeholder="******" {...field} />
                     </FormControl>
@@ -182,16 +182,16 @@ const Register = () => {
               />
               
               <Button type="submit" className="w-full" disabled={mutation.isPending}>
-                {mutation.isPending ? 'Đang đăng ký...' : 'Đăng ký'}
+                {mutation.isPending ? 'Registering...' : 'Register'}
               </Button>
             </form>
           </Form>
         </CardContent>
         <CardFooter className="flex justify-center">
           <div className="text-sm text-muted-foreground">
-            Đã có tài khoản?{' '}
+            Already have an account?{' '}
             <Button variant="link" className="p-0" onClick={() => navigate('/login')}>
-              Đăng nhập
+              Login
             </Button>
           </div>
         </CardFooter>

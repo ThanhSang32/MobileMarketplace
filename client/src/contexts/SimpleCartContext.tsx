@@ -1,6 +1,5 @@
 
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { Product } from '@shared/schema';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
 
@@ -8,7 +7,13 @@ interface CartItem {
   id: number;
   productId: number;
   quantity: number;
-  product: Product;
+  product: {
+    id: number;
+    name: string;
+    price: number;
+    image: string;
+    discount?: number;
+  };
 }
 
 interface Cart {
@@ -27,22 +32,22 @@ const defaultCart: Cart = {
   itemCount: 0
 };
 
-type CartContextType = {
-  cart: Cart;
+interface CartContextType {
+  cart: Cart | null;
   isLoading: boolean;
-  addToCart: (productId: number, product: Product, quantity?: number) => void;
-  updateQuantity: (itemId: number, quantity: number) => void;
-  removeItem: (itemId: number) => void;
-  clearCart: () => void;
-};
+  addToCart: (productId: number, quantity?: number) => Promise<void>;
+  removeFromCart: (itemId: number) => Promise<void>;
+  updateQuantity: (itemId: number, quantity: number) => Promise<void>;
+  clearCart: () => Promise<void>;
+}
 
 const CartContext = createContext<CartContextType>({
-  cart: defaultCart,
+  cart: null,
   isLoading: false,
-  addToCart: () => {},
-  updateQuantity: () => {},
-  removeItem: () => {},
-  clearCart: () => {}
+  addToCart: async () => {},
+  removeFromCart: async () => {},
+  updateQuantity: async () => {},
+  clearCart: async () => {}
 });
 
 export const useSimpleCart = () => useContext(CartContext);
@@ -54,10 +59,26 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const fetchCart = async () => {
     try {
+      console.log('Fetching cart data...');
+      const localCart = localStorage.getItem('cart');
+      if (localCart) {
+        console.log('Local cart from localStorage:', JSON.parse(localCart));
+        const parsedCart = JSON.parse(localCart);
+        console.log('Using cart directly from localStorage:', parsedCart);
+        setCart(parsedCart);
+        return;
+      }
+
       const response = await api.get('/api/cart');
-      setCart(response.data);
+      setCart(response);
+      localStorage.setItem('cart', JSON.stringify(response));
     } catch (error) {
       console.error('Error fetching cart:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to fetch cart"
+      });
     }
   };
 
@@ -65,21 +86,44 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     fetchCart();
   }, []);
 
-  const addToCart = async (productId: number, product: Product, quantity: number = 1) => {
+  const addToCart = async (productId: number, quantity: number = 1) => {
     setIsLoading(true);
     try {
       const response = await api.post('/api/cart', { productId, quantity });
-      setCart(response.data);
+      setCart(response);
+      localStorage.setItem('cart', JSON.stringify(response));
       toast({
-        title: "Thêm vào giỏ hàng thành công",
-        description: `Đã thêm ${quantity} ${product.name} vào giỏ hàng`
+        title: "Success",
+        description: "Item added to cart"
       });
     } catch (error) {
       console.error('Error adding to cart:', error);
       toast({
-        title: "Lỗi",
-        description: "Không thể thêm vào giỏ hàng",
-        variant: "destructive"
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to add item to cart"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const removeFromCart = async (itemId: number) => {
+    setIsLoading(true);
+    try {
+      const response = await api.delete(`/api/cart/${itemId}`);
+      setCart(response);
+      localStorage.setItem('cart', JSON.stringify(response));
+      toast({
+        title: "Success",
+        description: "Item removed from cart"
+      });
+    } catch (error) {
+      console.error('Error removing from cart:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to remove item from cart"
       });
     } finally {
       setIsLoading(false);
@@ -90,34 +134,14 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setIsLoading(true);
     try {
       const response = await api.put(`/api/cart/${itemId}`, { quantity });
-      setCart(response.data);
+      setCart(response);
+      localStorage.setItem('cart', JSON.stringify(response));
     } catch (error) {
       console.error('Error updating quantity:', error);
       toast({
-        title: "Lỗi",
-        description: "Không thể cập nhật số lượng",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const removeItem = async (itemId: number) => {
-    setIsLoading(true);
-    try {
-      const response = await api.delete(`/api/cart/${itemId}`);
-      setCart(response.data);
-      toast({
-        title: "Đã xóa sản phẩm",
-        description: "Sản phẩm đã được xóa khỏi giỏ hàng"
-      });
-    } catch (error) {
-      console.error('Error removing item:', error);
-      toast({
-        title: "Lỗi",
-        description: "Không thể xóa sản phẩm",
-        variant: "destructive" 
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update quantity"
       });
     } finally {
       setIsLoading(false);
@@ -127,18 +151,19 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const clearCart = async () => {
     setIsLoading(true);
     try {
-      await api.delete('/api/cart');
-      setCart(defaultCart);
+      const response = await api.delete('/api/cart');
+      setCart(response);
+      localStorage.setItem('cart', JSON.stringify(response));
       toast({
-        title: "Đã xóa giỏ hàng",
-        description: "Giỏ hàng đã được xóa"
+        title: "Success",
+        description: "Cart cleared"
       });
     } catch (error) {
       console.error('Error clearing cart:', error);
       toast({
-        title: "Lỗi",
-        description: "Không thể xóa giỏ hàng",
-        variant: "destructive"
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to clear cart"
       });
     } finally {
       setIsLoading(false);
@@ -151,8 +176,8 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         cart,
         isLoading,
         addToCart,
+        removeFromCart,
         updateQuantity,
-        removeItem,
         clearCart
       }}
     >

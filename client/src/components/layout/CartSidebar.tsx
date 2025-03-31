@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { X, Plus, Minus, Trash } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { Link, useNavigate } from "wouter"; // Added useNavigate
 import { Separator } from "@/components/ui/separator";
 
 interface CartSidebarProps {
@@ -14,6 +13,7 @@ interface CartSidebarProps {
 const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
   const { cart, updateQuantity, removeFromCart, clearCart, isLoading } = useCart();
   const [isUpdating, setIsUpdating] = useState(false);
+  const navigate = useNavigate(); // Added useNavigate hook
 
   if (!isOpen) return null;
 
@@ -100,11 +100,9 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
               <span>Tổng cộng</span>
               <span className="font-semibold">${cart.total.toFixed(2)}</span>
             </div>
-            <Link href="/checkout">
-              <Button className="w-full">
-                Thanh toán
-              </Button>
-            </Link>
+            <Button className="w-full bg-green-600 hover:bg-green-700 text-white" onClick={() => navigate("/checkout")}>
+              Thanh toán
+            </Button> {/* Replaced Link with Button and added onClick */}
           </div>
         )}
       </div>

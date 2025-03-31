@@ -5,6 +5,28 @@ import { queryClient } from "@/lib/queryClient";
 import { Product } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
+// Hàm trợ giúp cho localStorage
+const saveToLocalStorage = (key: string, data: any) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (error) {
+    console.error("Error saving to localStorage:", error);
+  }
+};
+
+const getFromLocalStorage = <T,>(key: string, defaultValue: T): T => {
+  try {
+    const saved = localStorage.getItem(key);
+    if (saved === null) {
+      return defaultValue;
+    }
+    return JSON.parse(saved) as T;
+  } catch (error) {
+    console.error("Error reading from localStorage:", error);
+    return defaultValue;
+  }
+};
+
 type CartItem = {
   id: number;
   sessionId: string;
@@ -69,7 +91,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     refetchOnWindowFocus: true,
     queryFn: async () => {
       try {
-        // Sử dụng fetch trực tiếp thay vì queryClient's queryFn
+        // Thử lấy dữ liệu từ server trước
         const res = await fetch("/api/cart", {
           headers: {
             "X-Session-ID": localStorage.getItem("sessionId") || ""
@@ -89,12 +111,28 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           throw new Error(`HTTP Error: ${res.status}`);
         }
         
-        const data = await res.json();
-        console.log("Cart data fetched:", data);
-        return data;
+        const serverData = await res.json();
+        console.log("Cart data fetched from server:", serverData);
+        
+        // Nếu server không có sản phẩm trong giỏ hàng,
+        // kiểm tra localStorage có dữ liệu giỏ hàng không
+        if (serverData.items.length === 0) {
+          const localCart = getFromLocalStorage<Cart>("localCart", defaultCart);
+          
+          if (localCart.items.length > 0) {
+            console.log("Using cart from localStorage instead (server cart empty):", localCart);
+            return localCart;
+          }
+        }
+        
+        return serverData;
       } catch (error) {
-        console.error("Error fetching cart:", error);
-        return defaultCart;
+        console.error("Error fetching cart from server:", error);
+        
+        // Nếu có lỗi, sử dụng dữ liệu từ localStorage
+        const localCart = getFromLocalStorage<Cart>("localCart", defaultCart);
+        console.log("Using cart from localStorage due to server error:", localCart);
+        return localCart;
       }
     }
   });
@@ -107,13 +145,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [cart, sessionId]);
 
-  // Add to cart mutation
+  // Add to cart mutation - Bao gồm cả localStorage
   const addToCartMutation = useMutation<Cart, Error, { productId: number, quantity: number }>({
     mutationFn: async ({ productId, quantity = 1 }) => {
       console.log("Adding to cart:", { productId, quantity });
       
       try {
-        // Sử dụng fetch trực tiếp thay vì apiRequest
+        // Trước tiên thử sử dụng API server
         const res = await fetch("/api/cart", {
           method: "POST", 
           headers: {
@@ -136,12 +174,95 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           throw new Error(`HTTP Error: ${res.status}`);
         }
         
-        const data = await res.json();
-        console.log("Added to cart response:", data);
-        return data;
+        // Lấy dữ liệu từ API
+        const serverCart = await res.json();
+        console.log("Added to cart response from server:", serverCart);
+        
+        // Đồng thời lưu một bản sao vào localStorage để đảm bảo có dữ liệu
+        // Thêm vào localStorage
+        const localCart = getFromLocalStorage<Cart>("localCart", defaultCart);
+        
+        // Lấy thông tin sản phẩm
+        const productResponse = await fetch(`/api/products/${productId}`);
+        if (!productResponse.ok) {
+          throw new Error(`Failed to fetch product details: ${productResponse.status}`);
+        }
+        const product = await productResponse.json();
+        
+        // Tìm xem sản phẩm đã có trong cart chưa
+        const existingItemIndex = localCart.items.findIndex(item => item.productId === productId);
+        
+        if (existingItemIndex >= 0) {
+          // Cập nhật số lượng nếu sản phẩm đã tồn tại
+          localCart.items[existingItemIndex].quantity += quantity;
+        } else {
+          // Thêm sản phẩm mới vào cart
+          localCart.items.push({
+            id: Date.now(), // ID tạm thời cho local storage
+            sessionId: localStorage.getItem("sessionId") || "",
+            productId,
+            quantity,
+            product
+          });
+        }
+        
+        // Cập nhật tổng cộng
+        localCart.subtotal = localCart.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+        localCart.total = localCart.subtotal - localCart.discount;
+        localCart.itemCount = localCart.items.reduce((sum, item) => sum + item.quantity, 0);
+        
+        // Lưu giỏ hàng vào localStorage
+        saveToLocalStorage("localCart", localCart);
+        console.log("Updated local cart:", localCart);
+        
+        // Trả về dữ liệu từ server hoặc localStorage nếu server thất bại
+        return serverCart;
       } catch (error) {
-        console.error("Error in direct fetch:", error);
-        throw error;
+        console.error("Error in server cart API:", error);
+        
+        // Nếu API thất bại, sử dụng localStorage
+        try {
+          // Lấy giỏ hàng hiện tại từ localStorage
+          const localCart = getFromLocalStorage<Cart>("localCart", defaultCart);
+          
+          // Lấy thông tin sản phẩm
+          const productResponse = await fetch(`/api/products/${productId}`);
+          if (!productResponse.ok) {
+            throw new Error(`Failed to fetch product details: ${productResponse.status}`);
+          }
+          const product = await productResponse.json();
+          
+          // Tìm xem sản phẩm đã có trong cart chưa
+          const existingItemIndex = localCart.items.findIndex(item => item.productId === productId);
+          
+          if (existingItemIndex >= 0) {
+            // Cập nhật số lượng nếu sản phẩm đã tồn tại
+            localCart.items[existingItemIndex].quantity += quantity;
+          } else {
+            // Thêm sản phẩm mới vào cart
+            localCart.items.push({
+              id: Date.now(), // ID tạm thời cho local storage
+              sessionId: localStorage.getItem("sessionId") || "",
+              productId,
+              quantity,
+              product
+            });
+          }
+          
+          // Cập nhật tổng cộng
+          localCart.subtotal = localCart.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+          localCart.total = localCart.subtotal - localCart.discount;
+          localCart.itemCount = localCart.items.reduce((sum, item) => sum + item.quantity, 0);
+          
+          // Lưu giỏ hàng vào localStorage
+          saveToLocalStorage("localCart", localCart);
+          console.log("Added to cart using localStorage fallback:", localCart);
+          
+          return localCart;
+        } catch (localError) {
+          console.error("Error in localStorage fallback:", localError);
+          throw error; // Ném lỗi gốc nếu cả hai phương pháp đều thất bại
+        }
       }
     },
     onSuccess: (data) => {

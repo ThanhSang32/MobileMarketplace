@@ -1,0 +1,140 @@
+import { useState } from 'react';
+import { useLocation } from 'wouter';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+
+// Form validation schema
+const loginSchema = z.object({
+  username: z.string().min(1, { message: 'Vui lòng nhập tên đăng nhập' }),
+  password: z.string().min(1, { message: 'Vui lòng nhập mật khẩu' })
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
+
+const Login = () => {
+  const [, navigate] = useLocation();
+  const { toast } = useToast();
+  const [error, setError] = useState<string | null>(null);
+
+  // Set up the form
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      username: '',
+      password: ''
+    }
+  });
+
+  // Set up the mutation
+  const mutation = useMutation({
+    mutationFn: async (data: LoginFormValues) => {
+      const response = await apiRequest('POST', '/api/auth/login', data);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Đăng nhập thất bại');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Đăng nhập thành công',
+        description: 'Chào mừng bạn quay trở lại'
+      });
+      navigate('/');
+    },
+    onError: (error: Error) => {
+      setError(error.message);
+      toast({
+        title: 'Đăng nhập thất bại',
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
+  });
+
+  // Handle form submission
+  const onSubmit = async (data: LoginFormValues) => {
+    setError(null);
+    await mutation.mutateAsync(data);
+  };
+
+  return (
+    <div className="container py-10 max-w-md">
+      <Card>
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold">Đăng nhập</CardTitle>
+          <CardDescription>
+            Nhập thông tin đăng nhập của bạn
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {error && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tên đăng nhập</FormLabel>
+                    <FormControl>
+                      <Input placeholder="tên_đăng_nhập" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mật khẩu</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="******" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <Button type="submit" className="w-full" disabled={mutation.isPending}>
+                {mutation.isPending ? 'Đang đăng nhập...' : 'Đăng nhập'}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+        <CardFooter className="flex flex-col space-y-4">
+          <div className="text-sm text-muted-foreground text-center">
+            Chưa có tài khoản?{' '}
+            <Button variant="link" className="p-0" onClick={() => navigate('/register')}>
+              Đăng ký
+            </Button>
+          </div>
+          <div className="text-sm text-muted-foreground text-center">
+            <Button variant="link" className="p-0" onClick={() => navigate('/forgot-password')}>
+              Quên mật khẩu?
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
+  );
+};
+
+export default Login;

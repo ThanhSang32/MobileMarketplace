@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "wouter";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "wouter";
 import { 
   ShoppingCart, 
   Search, 
@@ -7,8 +7,10 @@ import {
   Sun, 
   User, 
   Menu, 
-  ChevronDown 
-} from "@/components/ui/icons";
+  ChevronDown,
+  LogOut
+} from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
 import { useCart } from "@/contexts/CartContext";
 import { Badge } from "@/components/ui/badge";
 
@@ -27,11 +29,37 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const { cart } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [, navigate] = useLocation();
+
+  useEffect(() => {
+    // Check if user is logged in
+    const checkAuth = async () => {
+      try {
+        const response = await apiRequest('GET', '/api/auth/me');
+        setIsLoggedIn(response.ok);
+      } catch (error) {
+        setIsLoggedIn(false);
+      }
+    };
+    
+    checkAuth();
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle search functionality
     console.log("Searching for:", searchQuery);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await apiRequest('POST', '/api/auth/logout');
+      setIsLoggedIn(false);
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   return (
@@ -106,9 +134,24 @@ const Header: React.FC<HeaderProps> = ({
             </button>
             
             {/* User Account */}
-            <Link href="/account" className="p-2 rounded-full hover:bg-secondary dark:hover:bg-neutral-800 transition-colors">
-              <User className="h-5 w-5" />
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Link href="/account" className="p-2 rounded-full hover:bg-secondary dark:hover:bg-neutral-800 transition-colors">
+                  <User className="h-5 w-5" />
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="p-2 rounded-full hover:bg-secondary dark:hover:bg-neutral-800 transition-colors"
+                  aria-label="Đăng xuất"
+                >
+                  <LogOut className="h-5 w-5" />
+                </button>
+              </>
+            ) : (
+              <Link href="/login" className="p-2 rounded-full hover:bg-secondary dark:hover:bg-neutral-800 transition-colors">
+                <User className="h-5 w-5" />
+              </Link>
+            )}
             
             {/* Cart */}
             <button 

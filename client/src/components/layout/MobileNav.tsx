@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Link } from "wouter";
-import { X, ChevronDown } from "@/components/ui/icons";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "wouter";
+import { X, ChevronDown, User, LogOut } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -45,6 +46,34 @@ const DropdownItem: React.FC<DropdownItemProps> = ({ title, links, onClose }) =>
 };
 
 const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [, navigate] = useLocation();
+
+  useEffect(() => {
+    // Check if user is logged in
+    const checkAuth = async () => {
+      try {
+        const response = await apiRequest('GET', '/api/auth/me');
+        setIsLoggedIn(response.ok);
+      } catch (error) {
+        setIsLoggedIn(false);
+      }
+    };
+    
+    checkAuth();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await apiRequest('POST', '/api/auth/logout');
+      setIsLoggedIn(false);
+      navigate('/login');
+      onClose();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   if (!isOpen) return null;
 
   const phoneLinks = [
@@ -99,6 +128,39 @@ const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
           >
             Hàng Tân Trang
           </Link>
+          
+          <div className="mt-6 pt-6 border-t dark:border-neutral-800">
+            {isLoggedIn ? (
+              <>
+                <Link 
+                  href="/account" 
+                  className="flex items-center font-medium py-2 mb-4 hover:text-primary dark:hover:text-primary transition-colors"
+                  onClick={onClose}
+                >
+                  <User className="h-5 w-5 mr-2" />
+                  Tài khoản
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center w-full text-left font-medium py-2 mb-4 hover:text-primary dark:hover:text-primary transition-colors"
+                >
+                  <LogOut className="h-5 w-5 mr-2" />
+                  Đăng xuất
+                </button>
+              </>
+            ) : (
+              <>
+                <Link 
+                  href="/login" 
+                  className="flex items-center font-medium py-2 mb-4 hover:text-primary dark:hover:text-primary transition-colors"
+                  onClick={onClose}
+                >
+                  <User className="h-5 w-5 mr-2" />
+                  Đăng nhập
+                </Link>
+              </>
+            )}
+          </div>
         </nav>
       </div>
     </div>

@@ -5,12 +5,20 @@ import { z } from "zod";
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
+  email: text("email").notNull().unique(),
   password: text("password").notNull(),
+  fullName: text("full_name"),
+  phone: text("phone"),
+  role: text("role").notNull().default("user"), // "user" or "admin"
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
+  email: true,
   password: true,
+  fullName: true,
+  phone: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

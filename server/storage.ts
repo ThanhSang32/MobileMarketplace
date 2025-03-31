@@ -12,7 +12,10 @@ export interface IStorage {
   // Users
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, data: Partial<Omit<User, 'id' | 'createdAt'>>): Promise<User>;
+  updatePassword(id: number, newPassword: string): Promise<boolean>;
   
   // Products
   getAllProducts(): Promise<Product[]>;
@@ -60,12 +63,48 @@ export class MemStorage implements IStorage {
       (user) => user.username === username,
     );
   }
+  
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.email === email,
+    );
+  }
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userCurrentId++;
-    const user: User = { ...insertUser, id };
+    const now = new Date().toISOString();
+    const user: User = { 
+      ...insertUser, 
+      id, 
+      role: "user", 
+      createdAt: now,
+      fullName: insertUser.fullName || null,
+      phone: insertUser.phone || null
+    };
     this.users.set(id, user);
     return user;
+  }
+  
+  async updateUser(id: number, data: Partial<Omit<User, 'id' | 'createdAt'>>): Promise<User> {
+    const user = this.users.get(id);
+    if (!user) {
+      throw new Error(`User with id ${id} not found`);
+    }
+    
+    const updatedUser = { ...user, ...data };
+    this.users.set(id, updatedUser);
+    return updatedUser;
+  }
+  
+  async updatePassword(id: number, newPassword: string): Promise<boolean> {
+    const user = this.users.get(id);
+    if (!user) {
+      return false;
+    }
+    
+    const updatedUser = { ...user, password: newPassword };
+    this.users.set(id, updatedUser);
+    return true;
   }
   
   // Product methods

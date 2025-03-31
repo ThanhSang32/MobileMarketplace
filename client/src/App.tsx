@@ -16,6 +16,10 @@ import Repair from "@/pages/Repair";
 import Accessories from "@/pages/Accessories";
 import Wearables from "@/pages/Wearables";
 import Refurbished from "@/pages/Refurbished";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
+import Account from "@/pages/Account";
+import Shop from "@/pages/Shop";
 
 function Router() {
   return (
@@ -32,6 +36,10 @@ function Router() {
       <Route path="/accessories" component={Accessories} />
       <Route path="/wearables" component={Wearables} />
       <Route path="/refurbished" component={Refurbished} />
+      <Route path="/shop" component={Shop} />
+      <Route path="/login" component={Login} />
+      <Route path="/register" component={Register} />
+      <Route path="/account" component={Account} />
       <Route component={NotFound} />
     </Switch>
   );

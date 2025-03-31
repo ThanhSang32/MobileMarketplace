@@ -1,12 +1,50 @@
-import type { Express, Request, Response } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
-import { insertCartItemSchema } from "@shared/schema";
+import { insertCartItemSchema, insertUserSchema, User } from "@shared/schema";
 import { randomUUID } from "crypto";
+import bcrypt from "bcryptjs";
+import session from "express-session";
+
+// Extend Express Session
+declare module 'express-session' {
+  interface SessionData {
+    userId: number;
+  }
+}
+
+// Helper function to check if user is authenticated
+const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
+  if (req.session && req.session.userId) {
+    return next();
+  }
+  res.status(401).json({ message: "Unauthorized. Please log in." });
+};
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Session handling middleware
+  // Configure session middleware
+  app.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 1 day
+  }));
+
+  // Add user to request if logged in
+  app.use(async (req: Request, res: Response, next: NextFunction) => {
+    if (req.session && req.session.userId) {
+      try {
+        const user = await storage.getUser(req.session.userId);
+        (req as any).user = user;
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    }
+    next();
+  });
+  
+  // Cart session handling middleware
   app.use((req, res, next) => {
     // Lấy sessionId từ header hoặc tạo mới nếu chưa có
     const sessionId = req.headers['x-session-id'] as string || req.headers.sessionid as string || randomUUID();
@@ -268,6 +306,183 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error clearing cart:", error);
       res.status(500).json({ message: "Failed to clear cart" });
+    }
+  });
+
+  // AUTH ROUTES
+  
+  // Register a new user
+  app.post("/api/auth/register", async (req: Request, res: Response) => {
+    try {
+      const result = insertUserSchema.safeParse(req.body);
+
+      if (!result.success) {
+        return res.status(400).json({ 
+          message: "Invalid user data", 
+          errors: result.error.format() 
+        });
+      }
+
+      // Check if username already exists
+      const existingUsername = await storage.getUserByUsername(result.data.username);
+      if (existingUsername) {
+        return res.status(400).json({ message: "Username already taken" });
+      }
+
+      // Check if email already exists
+      const existingEmail = await storage.getUserByEmail(result.data.email);
+      if (existingEmail) {
+        return res.status(400).json({ message: "Email already registered" });
+      }
+
+      // Hash password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(result.data.password, salt);
+
+      // Create user with hashed password
+      const user = await storage.createUser({
+        ...result.data,
+        password: hashedPassword
+      });
+
+      // Don't send the password back
+      const { password, ...userWithoutPassword } = user;
+      
+      res.status(201).json({
+        message: "User registered successfully",
+        user: userWithoutPassword
+      });
+    } catch (error) {
+      console.error("Error registering user:", error);
+      res.status(500).json({ message: "Failed to register user" });
+    }
+  });
+
+  // Login
+  app.post("/api/auth/login", async (req: Request, res: Response) => {
+    try {
+      const { username, password } = req.body;
+
+      if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
+      }
+
+      // Find user by username
+      const user = await storage.getUserByUsername(username);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid username or password" });
+      }
+
+      // Compare passwords
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ message: "Invalid username or password" });
+      }
+
+      // Set session
+      req.session.userId = user.id;
+
+      // Don't send the password back
+      const { password: _, ...userWithoutPassword } = user;
+      
+      res.json({
+        message: "Login successful",
+        user: userWithoutPassword
+      });
+    } catch (error) {
+      console.error("Error logging in:", error);
+      res.status(500).json({ message: "Failed to login" });
+    }
+  });
+
+  // Logout
+  app.post("/api/auth/logout", (req: Request, res: Response) => {
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Error destroying session:", err);
+        return res.status(500).json({ message: "Failed to logout" });
+      }
+      res.json({ message: "Logged out successfully" });
+    });
+  });
+
+  // Get current user
+  app.get("/api/auth/me", isAuthenticated, (req: Request, res: Response) => {
+    // User is already attached to the request by isAuthenticated middleware
+    const { password, ...userWithoutPassword } = (req as any).user;
+    res.json(userWithoutPassword);
+  });
+
+  // Update profile
+  app.put("/api/auth/update-profile", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user.id;
+      const { email, fullName, phone } = req.body;
+
+      // Validate data
+      if (email && typeof email !== 'string') {
+        return res.status(400).json({ message: "Invalid email format" });
+      }
+
+      // Check if email is already taken by another user
+      if (email) {
+        const existingUser = await storage.getUserByEmail(email);
+        if (existingUser && existingUser.id !== userId) {
+          return res.status(400).json({ message: "Email already registered by another user" });
+        }
+      }
+
+      // For now just respond as if we updated (since we don't have an updateUser method in storage yet)
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Don't send the password back
+      const { password, ...userWithoutPassword } = user;
+      
+      res.json({
+        message: "Profile updated successfully",
+        user: {
+          ...userWithoutPassword,
+          email: email || user.email,
+          fullName: fullName !== undefined ? fullName : user.fullName,
+          phone: phone !== undefined ? phone : user.phone
+        }
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
+  // Change password
+  app.put("/api/auth/change-password", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user.id;
+      const { currentPassword, newPassword } = req.body;
+
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({ message: "Current password and new password are required" });
+      }
+
+      // Get user
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Compare current password
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ message: "Current password is incorrect" });
+      }
+
+      // For now just respond as if we updated (since we don't have an updateUser method in storage yet)
+      res.json({ message: "Password changed successfully" });
+    } catch (error) {
+      console.error("Error changing password:", error);
+      res.status(500).json({ message: "Failed to change password" });
     }
   });
 

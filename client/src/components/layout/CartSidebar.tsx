@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { X, Plus, Minus, Trash, ArrowRight } from "@/components/ui/icons";
-import { useCart } from "@/contexts/CartContext";
+import { X, Plus, Minus, Trash, ArrowRight } from "lucide-react";
+import { useSimpleCart } from "@/contexts/SimpleCartContext";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { queryClient } from "@/lib/queryClient";
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -13,7 +12,7 @@ interface CartSidebarProps {
 }
 
 const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
-  const { cart, updateQuantity, removeItem, clearCart, isLoading } = useCart();
+  const { cart, updateQuantity, removeItem, clearCart, isLoading } = useSimpleCart();
   const [isUpdating, setIsUpdating] = useState(false);
   
   useEffect(() => {
@@ -21,55 +20,35 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
       console.log("CartSidebar opened with cart:", cart);
     }
   }, [isOpen, cart]);
-  
-  // Force cart refresh when the sidebar opens
-  useEffect(() => {
-    if (isOpen) {
-      // Manually trigger a refresh of the cart data
-      queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
-      
-      // Also directly get the latest data from localStorage
-      const localCart = localStorage.getItem("localCart");
-      if (localCart) {
-        try {
-          const parsedCart = JSON.parse(localCart);
-          // Force update the cart data in React Query cache
-          queryClient.setQueryData(["/api/cart"], parsedCart);
-        } catch (e) {
-          console.error("Error parsing cart from localStorage:", e);
-        }
-      }
-    }
-  }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const handleIncreaseQuantity = async (itemId: number, currentQuantity: number) => {
+  const handleIncreaseQuantity = (itemId: number, currentQuantity: number) => {
     setIsUpdating(true);
     try {
-      await updateQuantity(itemId, currentQuantity + 1);
+      updateQuantity(itemId, currentQuantity + 1);
     } finally {
       setIsUpdating(false);
     }
   };
 
-  const handleDecreaseQuantity = async (itemId: number, currentQuantity: number) => {
+  const handleDecreaseQuantity = (itemId: number, currentQuantity: number) => {
     setIsUpdating(true);
     try {
       if (currentQuantity > 1) {
-        await updateQuantity(itemId, currentQuantity - 1);
+        updateQuantity(itemId, currentQuantity - 1);
       } else {
-        await removeItem(itemId);
+        removeItem(itemId);
       }
     } finally {
       setIsUpdating(false);
     }
   };
   
-  const handleClearCart = async () => {
+  const handleClearCart = () => {
     setIsUpdating(true);
     try {
-      await clearCart();
+      clearCart();
     } finally {
       setIsUpdating(false);
     }

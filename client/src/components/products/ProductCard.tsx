@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { Product } from '@shared/schema';
-import { Star, StarHalf, StarEmpty, ShoppingCart, Check, ArrowRight } from '@/components/ui/icons';
-import { useCart } from '@/contexts/CartContext';
+import { Star, ShoppingCart, Check } from 'lucide-react';
+import { useSimpleCart } from '@/contexts/SimpleCartContext';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 import { useToast } from "@/hooks/use-toast";
@@ -12,7 +12,7 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { addToCart, isLoading } = useCart();
+  const { addToCart, isLoading } = useSimpleCart();
   const [isAdded, setIsAdded] = useState(false);
   const [, navigate] = useLocation();
   const { toast } = useToast();
@@ -30,10 +30,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     e.stopPropagation();
     
     try {
-      await addToCart(product.id, 1);
-      // Hiển thị biểu tượng tích xanh để xác nhận đã thêm
+      addToCart(product.id, product, 1);
+      // Show checkmark icon to confirm addition
       setIsAdded(true);
-      // Đặt lại biểu tượng sau 1.5 giây
+      // Reset icon after 1.5 seconds
       setTimeout(() => setIsAdded(false), 1500);
     } catch (error) {
       console.error("Failed to add to cart:", error);
@@ -54,16 +54,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       comparedIds = comparedIds.filter(id => id !== product.id.toString());
       setIsCompared(false);
       toast({
-        title: "Đã loại bỏ khỏi so sánh",
-        description: "Sản phẩm đã được loại bỏ khỏi danh sách so sánh",
+        title: "Removed from comparison",
+        description: "Product has been removed from comparison list",
       });
     } else {
       // Add to comparison (max 4 products)
       if (comparedIds.length >= 4) {
         toast({
           variant: "destructive",
-          title: "Đã đạt giới hạn so sánh",
-          description: "Bạn chỉ có thể so sánh tối đa 4 sản phẩm cùng một lúc"
+          title: "Comparison limit reached",
+          description: "You can only compare up to 4 products at a time"
         });
         return;
       }
@@ -71,8 +71,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       comparedIds.push(product.id.toString());
       setIsCompared(true);
       toast({
-        title: "Đã thêm vào so sánh",
-        description: "Sản phẩm đã được thêm vào danh sách so sánh",
+        title: "Added to comparison",
+        description: "Product has been added to comparison list",
       });
     }
     
@@ -121,22 +121,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const renderStars = (rating: number) => {
     const stars = [];
     const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
     
     // Add full stars
     for (let i = 0; i < fullStars; i++) {
       stars.push(<Star key={`star-${i}`} className="h-4 w-4 text-yellow-400" />);
     }
     
-    // Add half star if needed
-    if (hasHalfStar) {
-      stars.push(<StarHalf key="half-star" className="h-4 w-4 text-yellow-400" />);
-    }
-    
-    // Add empty stars
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    // Add empty stars (simplified)
+    const emptyStars = 5 - fullStars;
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(<StarEmpty key={`empty-${i}`} className="h-4 w-4 text-yellow-400" />);
+      stars.push(<Star key={`empty-${i}`} className="h-4 w-4 text-yellow-400 opacity-30" />);
     }
     
     return stars;

@@ -5,6 +5,9 @@ import { queryClient } from "@/lib/queryClient";
 import { Product } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
+// Debug flag to log cart operations
+const DEBUG = true;
+
 // Tạo ID ngẫu nhiên cho các item trong giỏ hàng
 const generateId = () => Math.floor(Math.random() * 1000000);
 
@@ -105,19 +108,23 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Fetch cart data - ưu tiên từ localStorage
   const { data: cart = defaultCart, isLoading, refetch } = useQuery<Cart, Error, Cart>({
     queryKey: ["/api/cart"],
-    staleTime: 500, // Giảm stale time để refresh thường xuyên hơn
+    staleTime: 0, // No stale time - always refresh
     refetchOnWindowFocus: true,
+    enabled: true,
+    refetchInterval: 1000, // Refresh every second
     queryFn: async () => {
-      console.log("Fetching cart data...");
+      if (DEBUG) console.log("Fetching cart data...");
       
       // Lấy dữ liệu từ localStorage
       const localCart = getCartFromLocalStorage();
-      console.log("Local cart from localStorage:", localCart);
+      if (DEBUG) console.log("Local cart from localStorage:", localCart);
       
-      // Luôn sử dụng localStorage đầu tiên
-      console.log("Using cart directly from localStorage:", localCart);
+      // Force reload from localStorage directly (bypassing any API calls)
+      if (DEBUG) console.log("Using cart directly from localStorage:", localCart);
       
-      // Tạm thời tắt đồng bộ hóa từ server, chỉ sử dụng localStorage
+      // Đồng bộ dữ liệu với query client để các component khác cũng cập nhật
+      queryClient.setQueryData(["/api/cart"], localCart);
+      
       return localCart;
     }
   });

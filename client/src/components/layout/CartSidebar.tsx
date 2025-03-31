@@ -27,6 +27,18 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
     if (isOpen) {
       // Manually trigger a refresh of the cart data
       queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
+      
+      // Also directly get the latest data from localStorage
+      const localCart = localStorage.getItem("localCart");
+      if (localCart) {
+        try {
+          const parsedCart = JSON.parse(localCart);
+          // Force update the cart data in React Query cache
+          queryClient.setQueryData(["/api/cart"], parsedCart);
+        } catch (e) {
+          console.error("Error parsing cart from localStorage:", e);
+        }
+      }
     }
   }, [isOpen]);
 

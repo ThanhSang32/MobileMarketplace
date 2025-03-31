@@ -79,10 +79,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Add to cart mutation
   const addToCartMutation = useMutation<Cart, Error, { productId: number, quantity: number }>({
     mutationFn: async ({ productId, quantity = 1 }) => {
+      console.log("Adding to cart:", { productId, quantity });
       const res = await apiRequest("POST", "/api/cart", { productId, quantity });
-      return res.json();
+      const data = await res.json();
+      console.log("Added to cart response:", data);
+      return data;
     },
     onSuccess: (data) => {
+      console.log("Setting cart data after add:", data);
       queryClient.setQueryData(["/api/cart"], data);
       toast({
         title: "Added to cart",
@@ -90,6 +94,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
     },
     onError: (error) => {
+      console.error("Failed to add to cart:", error);
       toast({
         title: "Error",
         description: "Failed to add product to cart",

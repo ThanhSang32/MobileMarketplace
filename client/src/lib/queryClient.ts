@@ -21,6 +21,12 @@ export async function apiRequest(
     headers['X-Session-ID'] = sessionId;
   }
 
+  console.log(`API Request ${method} ${url}`, { 
+    headers, 
+    data, 
+    sessionId: localStorage.getItem('sessionId')
+  });
+
   const res = await fetch(url, {
     method,
     headers,
@@ -33,6 +39,7 @@ export async function apiRequest(
   // Lưu sessionId nếu có
   const newSessionId = res.headers.get('x-session-id');
   if (newSessionId) {
+    console.log(`Received sessionId: ${newSessionId}`);
     localStorage.setItem('sessionId', newSessionId);
   }
   
@@ -52,6 +59,11 @@ export const getQueryFn: <T>(options: {
       headers['X-Session-ID'] = sessionId;
     }
 
+    console.log(`QueryFn fetch ${queryKey[0]}`, { 
+      headers, 
+      sessionId: localStorage.getItem('sessionId')
+    });
+
     const res = await fetch(queryKey[0] as string, {
       credentials: "include",
       headers
@@ -66,6 +78,7 @@ export const getQueryFn: <T>(options: {
     // Lưu sessionId từ response header nếu có
     const newSessionId = res.headers.get('x-session-id');
     if (newSessionId) {
+      console.log(`QueryFn received sessionId: ${newSessionId}`);
       localStorage.setItem('sessionId', newSessionId);
     }
 

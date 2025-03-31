@@ -1,17 +1,14 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
+import { Product } from '@shared/schema';
 
 interface CartItem {
   id: number;
   productId: number;
   quantity: number;
-  product: {
-    id: number;
-    name: string;
-    price: number;
-    discount?: number;
-  };
+  product: Product;
 }
 
 interface Cart {
@@ -22,129 +19,102 @@ interface Cart {
   itemCount: number;
 }
 
-interface CartContextType extends Cart {
+interface CartContextType {
+  cart: Cart | undefined;
+  isLoading: boolean;
   addToCart: (productId: number, quantity?: number) => Promise<void>;
   removeFromCart: (itemId: number) => Promise<void>;
   updateQuantity: (itemId: number, quantity: number) => Promise<void>;
   clearCart: () => Promise<void>;
-  isLoading: boolean;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [cart, setCart] = useState<Cart>({
-    items: [],
-    subtotal: 0,
-    discount: 0,
-    total: 0,
-    itemCount: 0
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const fetchCart = async () => {
-    try {
-      const response = await api.get('/api/cart');
-      setCart(response.data); // Assuming api.get returns an object with data property
-    } catch (error) {
-      console.error('Error fetching cart:', error);
-    }
-  };
+  const { data: cart, isLoading } = useQuery<Cart>({
+    queryKey: ['cart'],
+    queryFn: () => api.get('/api/cart'),
+  });
 
-  useEffect(() => {
-    fetchCart();
-  }, []);
-
-  const addToCart = async (productId: number, quantity: number = 1) => {
-    setIsLoading(true);
-    try {
-      const response = await api.post('/api/cart', { productId, quantity });
-      setCart(response.data); // Assuming api.post returns an object with data property
+  const addToCartMutation = useMutation({
+    mutationFn: (variables: { productId: number; quantity: number }) =>
+      api.post('/api/cart', variables),
+    onSuccess: (newCart) => {
+      queryClient.setQueryData(['cart'], newCart);
       toast({
         title: "Thành công",
-        description: `Đã thêm ${quantity} sản phẩm vào giỏ hàng`,
+        description: "Đã thêm sản phẩm vào giỏ hàng",
       });
-    } catch (error) {
-      console.error('Error adding to cart:', error);
+    },
+    onError: () => {
       toast({
         title: "Lỗi",
         description: "Không thể thêm sản phẩm vào giỏ hàng",
-        variant: "destructive"
+        variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+  });
 
-  const removeFromCart = async (itemId: number) => {
-    setIsLoading(true);
-    try {
-      const response = await api.delete(`/api/cart/${itemId}`);
-      setCart(response.data); // Assuming api.delete returns an object with data property
+  const removeFromCartMutation = useMutation({
+    mutationFn: (itemId: number) => api.delete(`/api/cart/${itemId}`),
+    onSuccess: (newCart) => {
+      queryClient.setQueryData(['cart'], newCart);
       toast({
         title: "Thành công",
         description: "Đã xóa sản phẩm khỏi giỏ hàng",
       });
-    } catch (error) {
-      console.error('Error removing from cart:', error);
-      toast({
-        title: "Lỗi",
-        description: "Không thể xóa sản phẩm khỏi giỏ hàng",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+  });
 
-  const updateQuantity = async (itemId: number, quantity: number) => {
-    setIsLoading(true);
-    try {
-      const response = await api.put(`/api/cart/${itemId}`, { quantity });
-      setCart(response.data); // Assuming api.put returns an object with data property
-    } catch (error) {
-      console.error('Error updating quantity:', error);
-      toast({
-        title: "Lỗi",
-        description: "Không thể cập nhật số lượng",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const updateQuantityMutation = useMutation({
+    mutationFn: (variables: { itemId: number; quantity: number }) =>
+      api.put(`/api/cart/${variables.itemId}`, { quantity: variables.quantity }),
+    onSuccess: (newCart) => {
+      queryClient.setQueryData(['cart'], newCart);
+    },
+  });
 
-  const clearCart = async () => {
-    setIsLoading(true);
-    try {
-      const response = await api.delete('/api/cart');
-      setCart(response.data); // Assuming api.delete returns an object with data property
+  const clearCartMutation = useMutation({
+    mutationFn: () => api.delete('/api/cart'),
+    onSuccess: (newCart) => {
+      queryClient.setQueryData(['cart'], newCart);
       toast({
         title: "Thành công",
         description: "Đã xóa toàn bộ giỏ hàng",
       });
-    } catch (error) {
-      console.error('Error clearing cart:', error);
-      toast({
-        title: "Lỗi",
-        description: "Không thể xóa giỏ hàng",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    },
+  });
+
+  const addToCart = async (productId: number, quantity: number = 1) => {
+    await addToCartMutation.mutateAsync({ productId, quantity });
+  };
+
+  const removeFromCart = async (itemId: number) => {
+    await removeFromCartMutation.mutateAsync(itemId);
+  };
+
+  const updateQuantity = async (itemId: number, quantity: number) => {
+    await updateQuantityMutation.mutateAsync({ itemId, quantity });
+  };
+
+  const clearCart = async () => {
+    await clearCartMutation.mutateAsync();
   };
 
   return (
-    <CartContext.Provider value={{
-      ...cart,
-      addToCart,
-      removeFromCart,
-      updateQuantity,
-      clearCart,
-      isLoading
-    }}>
+    <CartContext.Provider
+      value={{
+        cart,
+        isLoading: isLoading || addToCartMutation.isPending || removeFromCartMutation.isPending || updateQuantityMutation.isPending || clearCartMutation.isPending,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

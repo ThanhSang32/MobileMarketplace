@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { Product } from '@shared/schema';
 import { useToast } from '@/hooks/use-toast';
@@ -26,6 +27,12 @@ interface CartContextType {
   clearCart: () => void;
 }
 
+const calculateCartTotals = (items: CartItem[]) => {
+  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const subtotal = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+  return { subtotal, itemCount, total: subtotal };
+};
+
 const defaultCart: Cart = {
   items: [],
   subtotal: 0,
@@ -43,24 +50,12 @@ const CartContext = createContext<CartContextType>({
   clearCart: () => {}
 });
 
-export const useSimpleCart = () => useContext(CartContext);
-
-const calculateCartTotals = (items: CartItem[]): { subtotal: number; itemCount: number; total: number } => {
-  const subtotal = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-  return {
-    subtotal,
-    itemCount,
-    total: subtotal
-  };
-};
-
-export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<Cart>(defaultCart);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  // Load cart from localStorage when component mounts
+  // Load cart from localStorage
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
@@ -68,7 +63,7 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Save cart to localStorage
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
@@ -76,7 +71,7 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const addToCart = (productId: number, product: Product, quantity: number = 1) => {
     setCart(prevCart => {
       const existingItem = prevCart.items.find(item => item.productId === productId);
-
+      
       let newItems;
       if (existingItem) {
         newItems = prevCart.items.map(item =>
@@ -95,20 +90,18 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           }
         ];
       }
-
-      const { subtotal, itemCount, total } = calculateCartTotals(newItems);
-
+      
+      const totals = calculateCartTotals(newItems);
+      
       toast({
         title: "Thêm vào giỏ hàng thành công",
-        description: `Đã thêm ${quantity} sản phẩm vào giỏ hàng`
+        description: `Đã thêm ${product.name} vào giỏ hàng`
       });
-
+      
       return {
         items: newItems,
-        subtotal,
-        discount: 0,
-        total,
-        itemCount
+        ...totals,
+        discount: 0
       };
     });
   };
@@ -118,15 +111,13 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       const newItems = prevCart.items.map(item =>
         item.id === itemId ? { ...item, quantity } : item
       );
-
-      const { subtotal, itemCount, total } = calculateCartTotals(newItems);
-
+      
+      const totals = calculateCartTotals(newItems);
+      
       return {
         items: newItems,
-        subtotal,
-        discount: 0,
-        total,
-        itemCount
+        ...totals,
+        discount: 0
       };
     });
   };
@@ -134,20 +125,27 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const removeItem = (itemId: number) => {
     setCart(prevCart => {
       const newItems = prevCart.items.filter(item => item.id !== itemId);
-      const { subtotal, itemCount, total } = calculateCartTotals(newItems);
-
+      const totals = calculateCartTotals(newItems);
+      
+      toast({
+        title: "Đã xóa sản phẩm",
+        description: "Sản phẩm đã được xóa khỏi giỏ hàng"
+      });
+      
       return {
         items: newItems,
-        subtotal,
-        discount: 0,
-        total,
-        itemCount
+        ...totals,
+        discount: 0
       };
     });
   };
 
   const clearCart = () => {
     setCart(defaultCart);
+    toast({
+      title: "Đã xóa giỏ hàng",
+      description: "Giỏ hàng đã được xóa"
+    });
   };
 
   return (
@@ -165,3 +163,5 @@ export const SimpleCartProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     </CartContext.Provider>
   );
 };
+
+export const useCart = () => useContext(CartContext);

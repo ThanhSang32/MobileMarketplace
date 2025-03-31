@@ -101,7 +101,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
               <span className="font-semibold">${cart.total.toFixed(2)}</span>
             </div>
             <Button className="w-full bg-green-600 hover:bg-green-700 text-white" onClick={() => setLocation("/checkout")}>
-              Thanh toán
+              Checkout
             </Button>
           </div>
         )}

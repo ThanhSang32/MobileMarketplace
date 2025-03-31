@@ -6,25 +6,25 @@ const Repair: React.FC = () => {
   return (
     <div className="bg-white dark:bg-neutral-900">
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-3xl font-bold mb-8 text-center">Dịch Vụ Sửa Chữa</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center">Repair Services</h1>
         
         <div className="max-w-4xl mx-auto">
           {/* Service Overview */}
           <section>
             <div className="flex items-center gap-4 mb-6">
               <Headphones className="h-8 w-8 text-primary" />
-              <h2 className="text-2xl font-bold">Dịch Vụ Sửa Chữa Chuyên Nghiệp</h2>
+              <h2 className="text-2xl font-bold">Professional Repair Services</h2>
             </div>
             <Separator className="mb-6" />
             
             <div className="bg-neutral-50 dark:bg-neutral-800 p-6 rounded-lg mb-8">
               <p className="text-neutral-600 dark:text-neutral-300 mb-4">
-                TechStore tự hào cung cấp dịch vụ sửa chữa thiết bị công nghệ chuyên nghiệp. Với đội ngũ kỹ thuật viên được đào tạo bài bản và trang thiết bị hiện đại, chúng tôi cam kết mang đến dịch vụ sửa chữa nhanh chóng, chất lượng cao và đáng tin cậy.
+                TechStore proudly provides professional technology repair services. With our well-trained technical team and modern equipment, we are committed to delivering fast, high-quality, and reliable repair services.
               </p>
               
-              <h3 className="text-lg font-semibold mb-2">Ưu Điểm Dịch Vụ Sửa Chữa TechStore:</h3>
+              <h3 className="text-lg font-semibold mb-2">TechStore Repair Service Advantages:</h3>
               <ul className="list-disc pl-6 space-y-2 text-neutral-600 dark:text-neutral-300">
-                <li>Đội ngũ kỹ thuật viên chuyên nghiệp, được chứng nhận bởi các thương hiệu lớn</li>
+                <li>Professional technical team certified by major brands</li>
                 <li>Sử dụng linh kiện chính hãng 100%</li>
                 <li>Quy trình làm việc minh bạch, thông báo chi phí trước khi sửa chữa</li>
                 <li>Dịch vụ bảo hành sau sửa chữa từ 1-3 tháng</li>

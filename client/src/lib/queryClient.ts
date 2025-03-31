@@ -12,14 +12,30 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
+  // Chuẩn bị headers
+  const headers: Record<string, string> = data ? { "Content-Type": "application/json" } : {};
+  
+  // Thêm session ID nếu có trong localStorage
+  const sessionId = localStorage.getItem('sessionId');
+  if (sessionId) {
+    headers['X-Session-ID'] = sessionId;
+  }
+
   const res = await fetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers,
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
 
   await throwIfResNotOk(res);
+  
+  // Lưu sessionId nếu có
+  const newSessionId = res.headers.get('x-session-id');
+  if (newSessionId) {
+    localStorage.setItem('sessionId', newSessionId);
+  }
+  
   return res;
 }
 
@@ -29,8 +45,16 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
+    // Thêm session ID nếu có trong localStorage
+    const headers: Record<string, string> = {};
+    const sessionId = localStorage.getItem('sessionId');
+    if (sessionId) {
+      headers['X-Session-ID'] = sessionId;
+    }
+
     const res = await fetch(queryKey[0] as string, {
       credentials: "include",
+      headers
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
@@ -38,6 +62,13 @@ export const getQueryFn: <T>(options: {
     }
 
     await throwIfResNotOk(res);
+
+    // Lưu sessionId từ response header nếu có
+    const newSessionId = res.headers.get('x-session-id');
+    if (newSessionId) {
+      localStorage.setItem('sessionId', newSessionId);
+    }
+
     return await res.json();
   };
 

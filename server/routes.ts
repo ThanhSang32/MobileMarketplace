@@ -8,13 +8,13 @@ import { randomUUID } from "crypto";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Session handling middleware
   app.use((req, res, next) => {
-    // Create a session ID if none exists
-    const sessionId = req.headers.sessionid as string || randomUUID();
+    // Lấy sessionId từ header hoặc tạo mới nếu chưa có
+    const sessionId = req.headers['x-session-id'] as string || req.headers.sessionid as string || randomUUID();
     
-    // Set the session ID in the request for use in routes
+    // Lưu sessionId vào request để sử dụng trong các route
     (req as any).sessionId = sessionId;
     
-    // Add the session ID to response headers for client storage
+    // Trả về sessionId trong header cho client lưu trữ
     res.setHeader('X-Session-ID', sessionId);
     
     next();

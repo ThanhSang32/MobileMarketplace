@@ -63,24 +63,22 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   // Fetch cart data
-  const { data: cart = defaultCart, isLoading, refetch } = useQuery({
+  const { data: cart = defaultCart, isLoading, refetch } = useQuery<Cart, Error, Cart>({
     queryKey: ["/api/cart"],
-    enabled: !!sessionId,
-    onSuccess: (data) => {
-      // Check if we need to store a new session ID
-      if (sessionId === "pending") {
-        const newSessionId = data.sessionId;
-        if (newSessionId) {
-          localStorage.setItem("sessionId", newSessionId);
-          setSessionId(newSessionId);
-        }
-      }
-    }
+    staleTime: 60000, // 1 minute
   });
 
+  // Cập nhật sessionId từ localStorage nếu có thay đổi
+  useEffect(() => {
+    const storedSessionId = localStorage.getItem("sessionId");
+    if (storedSessionId && sessionId !== storedSessionId) {
+      setSessionId(storedSessionId);
+    }
+  }, [cart, sessionId]);
+
   // Add to cart mutation
-  const addToCartMutation = useMutation({
-    mutationFn: async ({ productId, quantity = 1 }: { productId: number, quantity: number }) => {
+  const addToCartMutation = useMutation<Cart, Error, { productId: number, quantity: number }>({
+    mutationFn: async ({ productId, quantity = 1 }) => {
       const res = await apiRequest("POST", "/api/cart", { productId, quantity });
       return res.json();
     },
@@ -101,8 +99,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   // Update quantity mutation
-  const updateQuantityMutation = useMutation({
-    mutationFn: async ({ itemId, quantity }: { itemId: number, quantity: number }) => {
+  const updateQuantityMutation = useMutation<Cart, Error, { itemId: number, quantity: number }>({
+    mutationFn: async ({ itemId, quantity }) => {
       const res = await apiRequest("PUT", `/api/cart/${itemId}`, { quantity });
       return res.json();
     },
@@ -119,8 +117,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   // Remove item mutation
-  const removeItemMutation = useMutation({
-    mutationFn: async (itemId: number) => {
+  const removeItemMutation = useMutation<Cart, Error, number>({
+    mutationFn: async (itemId) => {
       const res = await apiRequest("DELETE", `/api/cart/${itemId}`, undefined);
       return res.json();
     },
@@ -141,7 +139,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   // Clear cart mutation
-  const clearCartMutation = useMutation({
+  const clearCartMutation = useMutation<Cart, Error, void>({
     mutationFn: async () => {
       const res = await apiRequest("DELETE", "/api/cart", undefined);
       return res.json();

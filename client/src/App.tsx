@@ -8,6 +8,11 @@ import Home from "@/pages/Home";
 import ProductDetail from "@/pages/ProductDetail";
 import CategoryPage from "@/pages/CategoryPage";
 import Checkout from "@/pages/Checkout";
+import Contact from "@/pages/Contact";
+import FAQ from "@/pages/FAQ";
+import Shipping from "@/pages/Shipping";
+import Warranty from "@/pages/Warranty";
+import Repair from "@/pages/Repair";
 
 function Router() {
   return (
@@ -16,6 +21,11 @@ function Router() {
       <Route path="/product/:id" component={ProductDetail} />
       <Route path="/category/:category" component={CategoryPage} />
       <Route path="/checkout" component={Checkout} />
+      <Route path="/contact" component={Contact} />
+      <Route path="/faq" component={FAQ} />
+      <Route path="/shipping" component={Shipping} />
+      <Route path="/warranty" component={Warranty} />
+      <Route path="/repair" component={Repair} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -67,6 +67,36 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     queryKey: ["/api/cart"],
     staleTime: 1000, // 1 second, refresh more frequently for testing
     refetchOnWindowFocus: true,
+    queryFn: async () => {
+      try {
+        // Sử dụng fetch trực tiếp thay vì queryClient's queryFn
+        const res = await fetch("/api/cart", {
+          headers: {
+            "X-Session-ID": localStorage.getItem("sessionId") || ""
+          }
+        });
+        
+        // Kiểm tra sessionId từ response
+        const newSessionId = res.headers.get("x-session-id");
+        if (newSessionId) {
+          console.log("Cart fetch: Received sessionId:", newSessionId);
+          localStorage.setItem("sessionId", newSessionId);
+        } else {
+          console.error("Cart fetch: Missing sessionId in response headers");
+        }
+        
+        if (!res.ok) {
+          throw new Error(`HTTP Error: ${res.status}`);
+        }
+        
+        const data = await res.json();
+        console.log("Cart data fetched:", data);
+        return data;
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+        return defaultCart;
+      }
+    }
   });
 
   // Cập nhật sessionId từ localStorage nếu có thay đổi
@@ -81,10 +111,38 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const addToCartMutation = useMutation<Cart, Error, { productId: number, quantity: number }>({
     mutationFn: async ({ productId, quantity = 1 }) => {
       console.log("Adding to cart:", { productId, quantity });
-      const res = await apiRequest("POST", "/api/cart", { productId, quantity });
-      const data = await res.json();
-      console.log("Added to cart response:", data);
-      return data;
+      
+      try {
+        // Sử dụng fetch trực tiếp thay vì apiRequest
+        const res = await fetch("/api/cart", {
+          method: "POST", 
+          headers: {
+            "Content-Type": "application/json",
+            "X-Session-ID": localStorage.getItem("sessionId") || ""
+          },
+          body: JSON.stringify({ productId, quantity })
+        });
+        
+        // Kiểm tra sessionId từ response
+        const newSessionId = res.headers.get("x-session-id");
+        if (newSessionId) {
+          console.log("Direct fetch: Received sessionId:", newSessionId);
+          localStorage.setItem("sessionId", newSessionId);
+        } else {
+          console.error("Direct fetch: Missing sessionId in response headers");
+        }
+        
+        if (!res.ok) {
+          throw new Error(`HTTP Error: ${res.status}`);
+        }
+        
+        const data = await res.json();
+        console.log("Added to cart response:", data);
+        return data;
+      } catch (error) {
+        console.error("Error in direct fetch:", error);
+        throw error;
+      }
     },
     onSuccess: (data) => {
       console.log("Setting cart data after add:", data);
@@ -107,8 +165,32 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Update quantity mutation
   const updateQuantityMutation = useMutation<Cart, Error, { itemId: number, quantity: number }>({
     mutationFn: async ({ itemId, quantity }) => {
-      const res = await apiRequest("PUT", `/api/cart/${itemId}`, { quantity });
-      return res.json();
+      try {
+        const res = await fetch(`/api/cart/${itemId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Session-ID": localStorage.getItem("sessionId") || ""
+          },
+          body: JSON.stringify({ quantity })
+        });
+        
+        const newSessionId = res.headers.get("x-session-id");
+        if (newSessionId) {
+          console.log("Update quantity: Received sessionId:", newSessionId);
+          localStorage.setItem("sessionId", newSessionId);
+        }
+        
+        if (!res.ok) {
+          throw new Error(`HTTP Error: ${res.status}`);
+        }
+        
+        const data = await res.json();
+        return data;
+      } catch (error) {
+        console.error("Error updating quantity:", error);
+        throw error;
+      }
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["/api/cart"], data);
@@ -125,8 +207,30 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Remove item mutation
   const removeItemMutation = useMutation<Cart, Error, number>({
     mutationFn: async (itemId) => {
-      const res = await apiRequest("DELETE", `/api/cart/${itemId}`, undefined);
-      return res.json();
+      try {
+        const res = await fetch(`/api/cart/${itemId}`, {
+          method: "DELETE",
+          headers: {
+            "X-Session-ID": localStorage.getItem("sessionId") || ""
+          }
+        });
+        
+        const newSessionId = res.headers.get("x-session-id");
+        if (newSessionId) {
+          console.log("Remove item: Received sessionId:", newSessionId);
+          localStorage.setItem("sessionId", newSessionId);
+        }
+        
+        if (!res.ok) {
+          throw new Error(`HTTP Error: ${res.status}`);
+        }
+        
+        const data = await res.json();
+        return data;
+      } catch (error) {
+        console.error("Error removing item:", error);
+        throw error;
+      }
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["/api/cart"], data);
@@ -147,8 +251,30 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Clear cart mutation
   const clearCartMutation = useMutation<Cart, Error, void>({
     mutationFn: async () => {
-      const res = await apiRequest("DELETE", "/api/cart", undefined);
-      return res.json();
+      try {
+        const res = await fetch("/api/cart", {
+          method: "DELETE",
+          headers: {
+            "X-Session-ID": localStorage.getItem("sessionId") || ""
+          }
+        });
+        
+        const newSessionId = res.headers.get("x-session-id");
+        if (newSessionId) {
+          console.log("Clear cart: Received sessionId:", newSessionId);
+          localStorage.setItem("sessionId", newSessionId);
+        }
+        
+        if (!res.ok) {
+          throw new Error(`HTTP Error: ${res.status}`);
+        }
+        
+        const data = await res.json();
+        return data;
+      } catch (error) {
+        console.error("Error clearing cart:", error);
+        throw error;
+      }
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["/api/cart"], data);

@@ -110,50 +110,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     queryFn: async () => {
       console.log("Fetching cart data...");
       
-      // Ưu tiên lấy dữ liệu từ localStorage trước
+      // Lấy dữ liệu từ localStorage
       const localCart = getCartFromLocalStorage();
       console.log("Local cart from localStorage:", localCart);
       
-      // Nếu localCart có dữ liệu, sử dụng nó
-      if (localCart.items.length > 0) {
-        console.log("Using cart directly from localStorage:", localCart);
-        return localCart;
-      }
+      // Luôn sử dụng localStorage đầu tiên
+      console.log("Using cart directly from localStorage:", localCart);
       
-      // Nếu localStorage không có dữ liệu, thử lấy từ server
-      try {
-        const res = await fetch("/api/cart", {
-          headers: {
-            "X-Session-ID": localStorage.getItem("sessionId") || ""
-          }
-        });
-        
-        // Kiểm tra sessionId từ response
-        const newSessionId = res.headers.get("x-session-id");
-        if (newSessionId) {
-          console.log("Cart fetch: Received sessionId:", newSessionId);
-          localStorage.setItem("sessionId", newSessionId);
-        }
-        
-        if (!res.ok) {
-          console.error("Server cart fetch failed:", res.status);
-          return localCart; // Trả về localCart nếu server request thất bại
-        }
-        
-        const serverData = await res.json();
-        console.log("Cart data fetched from server:", serverData);
-        
-        // Nếu server có dữ liệu nhưng localStorage không có, lưu dữ liệu server vào localStorage
-        if (serverData.items.length > 0 && localCart.items.length === 0) {
-          saveToLocalStorage("localCart", serverData);
-          console.log("Saved server cart to localStorage");
-        }
-        
-        return serverData.items.length > 0 ? serverData : localCart;
-      } catch (error) {
-        console.error("Error fetching cart from server:", error);
-        return localCart; // Fallback về localStorage nếu có lỗi
-      }
+      // Tạm thời tắt đồng bộ hóa từ server, chỉ sử dụng localStorage
+      return localCart;
     }
   });
 
@@ -170,36 +135,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     mutationFn: async ({ productId, quantity = 1 }) => {
       console.log("Adding to cart:", { productId, quantity });
       
+      // Chỉ sử dụng localStorage để đảm bảo hoạt động ngay lập tức
       try {
-        // Trước tiên thử sử dụng API server
-        const res = await fetch("/api/cart", {
-          method: "POST", 
-          headers: {
-            "Content-Type": "application/json",
-            "X-Session-ID": localStorage.getItem("sessionId") || ""
-          },
-          body: JSON.stringify({ productId, quantity })
-        });
-        
-        // Kiểm tra sessionId từ response
-        const newSessionId = res.headers.get("x-session-id");
-        if (newSessionId) {
-          console.log("Direct fetch: Received sessionId:", newSessionId);
-          localStorage.setItem("sessionId", newSessionId);
-        } else {
-          console.error("Direct fetch: Missing sessionId in response headers");
-        }
-        
-        if (!res.ok) {
-          throw new Error(`HTTP Error: ${res.status}`);
-        }
-        
-        // Lấy dữ liệu từ API
-        const serverCart = await res.json();
-        console.log("Added to cart response from server:", serverCart);
-        
-        // Đồng thời lưu một bản sao vào localStorage để đảm bảo có dữ liệu
-        // Thêm vào localStorage
+        // Lấy giỏ hàng hiện tại từ localStorage
         const localCart = getFromLocalStorage<Cart>("localCart", defaultCart);
         
         // Lấy thông tin sản phẩm
@@ -233,56 +171,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         // Lưu giỏ hàng vào localStorage
         saveToLocalStorage("localCart", localCart);
-        console.log("Updated local cart:", localCart);
+        console.log("Added to cart using localStorage:", localCart);
         
-        // Trả về dữ liệu từ server hoặc localStorage nếu server thất bại
-        return serverCart;
+        // Trả về dữ liệu từ localStorage
+        return localCart;
       } catch (error) {
-        console.error("Error in server cart API:", error);
-        
-        // Nếu API thất bại, sử dụng localStorage
-        try {
-          // Lấy giỏ hàng hiện tại từ localStorage
-          const localCart = getFromLocalStorage<Cart>("localCart", defaultCart);
-          
-          // Lấy thông tin sản phẩm
-          const productResponse = await fetch(`/api/products/${productId}`);
-          if (!productResponse.ok) {
-            throw new Error(`Failed to fetch product details: ${productResponse.status}`);
-          }
-          const product = await productResponse.json();
-          
-          // Tìm xem sản phẩm đã có trong cart chưa
-          const existingItemIndex = localCart.items.findIndex(item => item.productId === productId);
-          
-          if (existingItemIndex >= 0) {
-            // Cập nhật số lượng nếu sản phẩm đã tồn tại
-            localCart.items[existingItemIndex].quantity += quantity;
-          } else {
-            // Thêm sản phẩm mới vào cart
-            localCart.items.push({
-              id: Date.now(), // ID tạm thời cho local storage
-              sessionId: localStorage.getItem("sessionId") || "",
-              productId,
-              quantity,
-              product
-            });
-          }
-          
-          // Cập nhật tổng cộng
-          localCart.subtotal = localCart.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-          localCart.total = localCart.subtotal - localCart.discount;
-          localCart.itemCount = localCart.items.reduce((sum, item) => sum + item.quantity, 0);
-          
-          // Lưu giỏ hàng vào localStorage
-          saveToLocalStorage("localCart", localCart);
-          console.log("Added to cart using localStorage fallback:", localCart);
-          
-          return localCart;
-        } catch (localError) {
-          console.error("Error in localStorage fallback:", localError);
-          throw error; // Ném lỗi gốc nếu cả hai phương pháp đều thất bại
-        }
+        console.error("Error adding to cart:", error);
+        throw error;
       }
     },
     onSuccess: (data) => {
@@ -308,7 +203,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     mutationFn: async ({ itemId, quantity }) => {
       console.log("Updating quantity for item:", itemId, "to", quantity);
       
-      // Cập nhật trên localStorage trước
+      // Chỉ sử dụng localStorage 
       const localCart = getFromLocalStorage<Cart>("localCart", defaultCart);
       const itemIndex = localCart.items.findIndex(item => item.id === itemId);
       
@@ -326,37 +221,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log("Updated quantity in localStorage:", localCart);
       } else {
         console.warn("Item not found in localStorage cart:", itemId);
+        throw new Error("Item not found in cart");
       }
       
-      // Sau đó thử cập nhật trên server
-      try {
-        const res = await fetch(`/api/cart/${itemId}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Session-ID": localStorage.getItem("sessionId") || ""
-          },
-          body: JSON.stringify({ quantity })
-        });
-        
-        const newSessionId = res.headers.get("x-session-id");
-        if (newSessionId) {
-          console.log("Update quantity: Received sessionId:", newSessionId);
-          localStorage.setItem("sessionId", newSessionId);
-        }
-        
-        if (!res.ok) {
-          console.warn("Server update failed, using localStorage data");
-          return localCart;
-        }
-        
-        const serverData = await res.json();
-        return serverData;
-      } catch (error) {
-        console.error("Error updating quantity on server:", error);
-        // Trả về dữ liệu đã cập nhật trong localStorage
-        return localCart;
-      }
+      return localCart;
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["/api/cart"], data);
@@ -375,7 +243,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     mutationFn: async (itemId) => {
       console.log("Removing item from cart:", itemId);
       
-      // Xóa trên localStorage trước
+      // Chỉ sử dụng localStorage
       const localCart = getFromLocalStorage<Cart>("localCart", defaultCart);
       const itemIndex = localCart.items.findIndex(item => item.id === itemId);
       
@@ -393,35 +261,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log("Removed item from localStorage:", localCart);
       } else {
         console.warn("Item not found in localStorage cart:", itemId);
+        throw new Error("Item not found in cart");
       }
       
-      // Sau đó thử xóa trên server
-      try {
-        const res = await fetch(`/api/cart/${itemId}`, {
-          method: "DELETE",
-          headers: {
-            "X-Session-ID": localStorage.getItem("sessionId") || ""
-          }
-        });
-        
-        const newSessionId = res.headers.get("x-session-id");
-        if (newSessionId) {
-          console.log("Remove item: Received sessionId:", newSessionId);
-          localStorage.setItem("sessionId", newSessionId);
-        }
-        
-        if (!res.ok) {
-          console.warn("Server remove failed, using localStorage data");
-          return localCart;
-        }
-        
-        const serverData = await res.json();
-        return serverData;
-      } catch (error) {
-        console.error("Error removing item on server:", error);
-        // Trả về dữ liệu đã cập nhật trong localStorage
-        return localCart;
-      }
+      return localCart;
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["/api/cart"], data);
@@ -444,37 +287,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     mutationFn: async () => {
       console.log("Clearing cart");
       
-      // Xóa trước trong localStorage
+      // Chỉ sử dụng localStorage
       saveToLocalStorage("localCart", defaultCart);
       console.log("Cleared cart in localStorage");
       
-      // Sau đó thử xóa trên server
-      try {
-        const res = await fetch("/api/cart", {
-          method: "DELETE",
-          headers: {
-            "X-Session-ID": localStorage.getItem("sessionId") || ""
-          }
-        });
-        
-        const newSessionId = res.headers.get("x-session-id");
-        if (newSessionId) {
-          console.log("Clear cart: Received sessionId:", newSessionId);
-          localStorage.setItem("sessionId", newSessionId);
-        }
-        
-        if (!res.ok) {
-          console.warn("Server clear cart failed, using empty cart from localStorage");
-          return defaultCart;
-        }
-        
-        const data = await res.json();
-        return data;
-      } catch (error) {
-        console.error("Error clearing cart on server:", error);
-        // Luôn trả về giỏ hàng rỗng nếu lỗi
-        return defaultCart;
-      }
+      return defaultCart;
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["/api/cart"], data);

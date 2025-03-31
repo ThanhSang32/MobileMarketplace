@@ -24,17 +24,17 @@ const Wearables: React.FC = () => {
   
   // Brand filter options
   const brandFilterOptions = [
-    { value: 'all', label: 'Tất cả thương hiệu' },
+    { value: 'all', label: 'All Brands' },
     ...brands.map(brand => ({ value: brand, label: brand }))
   ];
   
   // Type filter options
   const typeFilterOptions = [
-    { value: 'all', label: 'Tất cả thiết bị' },
-    { value: 'smartwatch', label: 'Đồng hồ thông minh' },
-    { value: 'fitnesstracker', label: 'Vòng đeo tay thông minh' },
-    { value: 'hearable', label: 'Tai nghe không dây' },
-    { value: 'smartglasses', label: 'Kính thông minh' }
+    { value: 'all', label: 'All Devices' },
+    { value: 'smartwatch', label: 'Smart Watches' },
+    { value: 'fitnesstracker', label: 'Fitness Trackers' },
+    { value: 'hearable', label: 'Wireless Earbuds' },
+    { value: 'smartglasses', label: 'Smart Glasses' }
   ];
   
   // Apply filters

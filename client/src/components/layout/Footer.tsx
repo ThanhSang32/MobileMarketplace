@@ -35,7 +35,7 @@ const Footer: React.FC = () => {
               </a>
             </div>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4">Shop</h3>
             <ul className="space-y-3">
@@ -51,22 +51,22 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <Link href="/accessories" className="text-neutral-400 hover:text-white">
-                  Phụ Kiện
+                  Accessories
                 </Link>
               </li>
               <li>
                 <Link href="/wearables" className="text-neutral-400 hover:text-white">
-                  Thiết Bị Đeo
+                  Wearables
                 </Link>
               </li>
               <li>
                 <Link href="/refurbished" className="text-neutral-400 hover:text-white">
-                  Hàng Tân Trang
+                  Refurbished
                 </Link>
               </li>
             </ul>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4">Customer Service</h3>
             <ul className="space-y-3">
@@ -97,7 +97,7 @@ const Footer: React.FC = () => {
               </li>
             </ul>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact</h3>
             <ul className="space-y-3 text-neutral-400">
@@ -116,7 +116,7 @@ const Footer: React.FC = () => {
             </ul>
           </div>
         </div>
-        
+
         <div className="border-t border-neutral-700 pt-6 mt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-neutral-400 text-sm mb-4 md:mb-0">

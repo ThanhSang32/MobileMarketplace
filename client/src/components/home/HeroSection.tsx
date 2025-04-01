@@ -29,7 +29,7 @@ const HeroSection: React.FC = () => {
           </div>
           <div className="md:w-1/2">
             <img 
-              src="https://images.unsplash.com/photo-1610792516307-ea5acd9c3b00?q=80&w=800&auto=format&fit=crop" 
+              src="/images/hero-banner.jpg" 
               alt="Featured products" 
               className="rounded-lg shadow-md object-cover w-full h-auto max-h-[400px]" 
             />

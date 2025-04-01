@@ -55,18 +55,6 @@ const Checkout: React.FC = () => {
     }
   });
 
-  // Bỏ qua kiểm tra giỏ hàng trống
-  // React.useEffect(() => {
-  //   if (cart && cart.items.length === 0) {
-  //     toast({
-  //       title: "Empty Cart",
-  //       description: "Your cart is empty. Please add some products before checkout.",
-  //       variant: "destructive"
-  //     });
-  //     navigate("/");
-  //   }
-  // }, [cart, navigate, toast]);
-
   // Clear cart mutation
   const clearCartMutation = useMutation({
     mutationFn: async () => {
@@ -87,14 +75,14 @@ const Checkout: React.FC = () => {
   // Handle form submission
   const onSubmit = async (data: CheckoutFormValues) => {
     setIsProcessing(true);
-    
+
     try {
       // In a real app, this would be an API call to process the order
       // For now, we'll just simulate a successful order
-      
+
       // Simulate API processing delay
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       // Try to clear the cart, but continue even if it fails
       try {
         await clearCartMutation.mutateAsync();
@@ -102,13 +90,13 @@ const Checkout: React.FC = () => {
       } catch (err) {
         console.log('Failed to clear cart, but continuing with checkout');
       }
-      
+
       // Show success message
       toast({
         title: "Order Placed Successfully!",
         description: "Thank you for your purchase. Your order has been received.",
       });
-      
+
       // Redirect to home page
       navigate("/");
     } catch (error) {
@@ -122,20 +110,11 @@ const Checkout: React.FC = () => {
     }
   };
 
-  // Không cần kiểm tra cart null lớp
-  // if (!cart) {
-  //   return (
-  //     <div className="container mx-auto px-4 py-8 text-center">
-  //       <p>Loading checkout...</p>
-  //     </div>
-  //   );
-  // }
-
   return (
     <div className="bg-white dark:bg-neutral-900">
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8">Checkout</h1>
-        
+
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Checkout Form */}
           <div className="lg:w-2/3">
@@ -143,7 +122,7 @@ const Checkout: React.FC = () => {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 shadow-sm">
                   <h2 className="text-xl font-semibold mb-4">Contact Information</h2>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
@@ -158,7 +137,7 @@ const Checkout: React.FC = () => {
                         </FormItem>
                       )}
                     />
-                    
+
                     <FormField
                       control={form.control}
                       name="lastName"
@@ -172,7 +151,7 @@ const Checkout: React.FC = () => {
                         </FormItem>
                       )}
                     />
-                    
+
                     <FormField
                       control={form.control}
                       name="email"
@@ -186,7 +165,7 @@ const Checkout: React.FC = () => {
                         </FormItem>
                       )}
                     />
-                    
+
                     <FormField
                       control={form.control}
                       name="phone"
@@ -202,10 +181,10 @@ const Checkout: React.FC = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 shadow-sm">
                   <h2 className="text-xl font-semibold mb-4">Shipping Address</h2>
-                  
+
                   <div className="grid grid-cols-1 gap-4">
                     <FormField
                       control={form.control}
@@ -220,7 +199,7 @@ const Checkout: React.FC = () => {
                         </FormItem>
                       )}
                     />
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
                         control={form.control}
@@ -235,7 +214,7 @@ const Checkout: React.FC = () => {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={form.control}
                         name="zipCode"
@@ -249,7 +228,7 @@ const Checkout: React.FC = () => {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={form.control}
                         name="country"
@@ -266,10 +245,10 @@ const Checkout: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 shadow-sm">
                   <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
-                  
+
                   <div className="space-y-4">
                     <FormField
                       control={form.control}
@@ -318,7 +297,7 @@ const Checkout: React.FC = () => {
                         </FormItem>
                       )}
                     />
-                    
+
                     {form.watch("paymentMethod") === "credit" && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-md">
                         <div className="col-span-2">
@@ -347,7 +326,7 @@ const Checkout: React.FC = () => {
                     )}
                   </div>
                 </div>
-                
+
                 <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 shadow-sm">
                   <FormField
                     control={form.control}
@@ -366,7 +345,7 @@ const Checkout: React.FC = () => {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={form.control}
                     name="terms"
@@ -387,7 +366,7 @@ const Checkout: React.FC = () => {
                       </FormItem>
                     )}
                   />
-                  
+
                   <Button 
                     type="submit" 
                     className="w-full mt-6 py-6 bg-primary hover:bg-primary/90 text-white"
@@ -399,76 +378,59 @@ const Checkout: React.FC = () => {
               </form>
             </Form>
           </div>
-          
+
           {/* Order Summary */}
           <div className="lg:w-1/3">
             <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 shadow-sm sticky top-24">
               <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-              
+
               <div className="space-y-4 mb-4">
-                {/* Sản phẩm mẫu 1 */}
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-700 rounded overflow-hidden">
-                    <img 
-                      src="https://images.unsplash.com/photo-1605236453806-6ff36851218e?q=80&w=256&h=256&auto=format&fit=crop" 
-                      alt="iPhone 13 Pro" 
-                      className="w-full h-full object-cover" 
-                    />
+                {cart?.items.map((item) => (
+                  <div key={item.id} className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-700 rounded overflow-hidden">
+                      <img 
+                        src={item.image} 
+                        alt={item.name} 
+                        className="w-full h-full object-cover" 
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium">{item.name}</h4>
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        Qty: {item.quantity}
+                      </p>
+                    </div>
+                    <div className="font-semibold">
+                      ${(item.price * item.quantity).toFixed(2)}
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-medium">iPhone 13 Pro</h4>
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                      Qty: 1
-                    </p>
-                  </div>
-                  <div className="font-semibold">
-                    $999.00
-                  </div>
-                </div>
-                
-                {/* Sản phẩm mẫu 2 */}
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-700 rounded overflow-hidden">
-                    <img 
-                      src="https://images.unsplash.com/photo-1529336953128-a85760f58cb5?q=80&w=256&h=256&auto=format&fit=crop" 
-                      alt="Apple AirPods Pro" 
-                      className="w-full h-full object-cover" 
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-medium">Apple AirPods Pro</h4>
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                      Qty: 1
-                    </p>
-                  </div>
-                  <div className="font-semibold">
-                    $249.00
-                  </div>
-                </div>
+                ))}
               </div>
-              
+
               <Separator className="my-4" />
-              
+
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span className="font-semibold">$1,248.00</span>
+                  <span className="font-semibold">${cart?.subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
                   <span className="font-semibold">Free</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Tax</span>
-                  <span className="font-semibold">$99.84</span>
-                </div>
-              </div>
-              
+                {cart?.discount > 0 && (
+                  <div className="flex justify-between text-green-600">
+                    <span>Discount</span>
+                    <span className="font-semibold">-${cart.discount.toFixed(2)}</span>
+                  </div>
+                )}
+
               <Separator className="my-4" />
-              
+
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
-                <span>$1,347.84</span>
+                <span>${cart?.total.toFixed(2)}</span>
+              </div>
               </div>
             </div>
           </div>

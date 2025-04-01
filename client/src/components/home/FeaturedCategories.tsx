@@ -27,22 +27,22 @@ const FeaturedCategories: React.FC = () => {
   const categories = [
     {
       title: "Smartphones",
-      imageSrc: "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?q=80&w=300&auto=format&fit=crop",
+      imageSrc: "/images/category-phones.jpg",
       href: "/category/phone"
     },
     {
       title: "Laptops",
-      imageSrc: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=300&auto=format&fit=crop",
+      imageSrc: "/images/category-laptops.jpg", 
       href: "/category/laptop"
     },
     {
       title: "Audio",
-      imageSrc: "https://images.unsplash.com/photo-1600086827875-a63b01f1335c?q=80&w=300&auto=format&fit=crop",
+      imageSrc: "/images/category-audio.jpg",
       href: "/category/audio"
     },
     {
-      title: "Accessories",
-      imageSrc: "https://images.unsplash.com/photo-1588516903720-8ceb67f9ef84?q=80&w=300&auto=format&fit=crop",
+      title: "Accessories", 
+      imageSrc: "/images/category-accessories.jpg",
       href: "/category/accessories"
     }
   ];

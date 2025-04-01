@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X, Plus, Minus, Trash } from "lucide-react";
+import { X, Plus, Minus, Trash, ShoppingBag } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
@@ -79,32 +79,17 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
               </Button>
             </div>
           )}
-        </div>
 
-        {cart?.items && cart.items.length > 0 && (
-          <div className="p-4 border-t">
-            <div className="flex justify-between mb-2">
-              <span>Subtotal</span>
-              <span className="font-semibold">${cart.subtotal.toFixed(2)}</span>
-            </div>
-            {cart.discount > 0 && (
-              <div className="flex justify-between mb-2">
-                <span>Discount</span>
-                <span className="font-semibold text-green-500">
-                  -${cart.discount.toFixed(2)}
-                </span>
-              </div>
-            )}
-            <Separator className="my-2" />
-            <div className="flex justify-between mb-4">
-              <span>Total</span>
-              <span className="font-semibold">${cart.total.toFixed(2)}</span>
-            </div>
-            <Button className="w-full bg-green-600 hover:bg-green-700 text-white" onClick={() => setLocation("/checkout")}>
-              Checkout
-            </Button>
+          {/* Checkout Button */}
+          <div className="mt-4">
+            <Link href="/checkout">
+              <Button className="w-full" size="lg">
+                <ShoppingBag className="mr-2 h-5 w-5" />
+                Checkout (${cart?.total.toFixed(2)})
+              </Button>
+            </Link>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
